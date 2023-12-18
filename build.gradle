@@ -60,6 +60,15 @@ jar {
 
 loom {
 	accessWidenerPath = file("src/main/resources/starcaller.accesswidener")
+
+	splitEnvironmentSourceSets()
+
+	mods {
+		"starcaller" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
 }
 
 publishing {
