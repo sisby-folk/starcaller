@@ -1,0 +1,116 @@
+//file:noinspection GroovyAssignabilityCheck
+//file:noinspection GroovyAccessibility
+buildscript {
+	dependencies {
+		classpath "com.modrinth.minotaur:Minotaur:${libs.versions.minotaur.get()}"
+		classpath "com.github.breadmoirai:github-release:${libs.versions.githubRelease.get()}"
+	}
+}
+
+
+plugins {
+	id 'maven-publish'
+	alias libs.plugins.loom
+}
+
+version = "$project.baseVersion+$project.branch"
+archivesBaseName = project.name
+group = 'folk.sisby'
+
+repositories {
+	mavenLocal()
+	maven { url 'https://maven.fabricmc.net/'}
+	maven { url 'https://repo.sleeping.town/'}
+	maven { url "https://maven.terraformersmc.com/" }
+}
+
+dependencies {
+	minecraft libs.mc
+	mappings libs.yarn
+	modImplementation libs.fl
+	modImplementation libs.fapi
+}
+
+processResources {
+	final Map<String, String> map = [
+			"version"      : version.toString(),
+			"mc"           : libs.versions.mc.get(),
+			"fl"           : libs.versions.fl.get(),
+			"fapi"         : libs.versions.fapi.get(),
+	]
+
+	inputs.properties(map)
+	filesMatching('*.mod.json') { expand(map) }
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.encoding = "UTF-8"
+	it.options.release = 17
+}
+
+java {
+	withSourcesJar()
+}
+
+jar {
+	from("LICENSE.txt") {
+		rename { "${it}_${archivesBaseName}" }
+	}
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/starcaller.accesswidener")
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+}
+
+if (System.getenv("MODRINTH_TOKEN")) {
+	apply plugin: "com.modrinth.minotaur"
+	modrinth {
+		token = System.getenv("MODRINTH_TOKEN")
+		projectId = 'starcaller'
+		versionNumber = project.version
+		versionName = baseVersion
+		versionType = 'release'
+		uploadFile = remapJar
+		gameVersions = [libs.versions.mc.get()]
+		loaders = ['quilt', 'fabric']
+		detectLoaders = false
+		dependencies {
+		}
+		changelog = "Changelog: https://github.com/sisby-folk/starcaller/releases/tag/v" + baseVersion
+		syncBodyFrom = rootProject.file("README.md").text
+	}
+}
+
+if (System.getenv("GITHUB_TOKEN")) {
+	apply plugin: "com.github.breadmoirai.github-release"
+	githubRelease {
+		token System.getenv("GITHUB_TOKEN")
+		owner "sisby-folk"
+		repo "starcaller"
+		tagName 'v' + baseVersion
+		releaseName baseVersion
+		targetCommitish defaultBranch
+		draft false
+		prerelease false
+		releaseAssets remapJar.archiveFile
+		allowUploadToExisting true
+		generateReleaseNotes true
+	}
+	tasks.githubRelease.dependsOn remapJar
+}
+
+if (System.getenv("MODRINTH_TOKEN") && System.getenv("GITHUB_TOKEN")) {
+	tasks.register("fullRelease") {
+		group "publishing"
+		dependsOn "githubRelease"
+		dependsOn "modrinth"
+	}
+}

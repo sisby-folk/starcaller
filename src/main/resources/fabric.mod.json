@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "starcaller",
+  "version": "${version}",
+  "name": "Starcaller",
+  "description": "An unconventional mod about the effects of pulling stars from the sky.",
+  "authors": [
+    "Sisby folk"
+  ],
+  "contact": {
+    "homepage": "https://github.com/sisby-folk/starcaller",
+    "sources": "https://github.com/sisby-folk/starcaller",
+    "issues": "https://github.com/sisby-folk/starcaller/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/starcaller/icon.png",
+  "entrypoints": {
+    "main": [
+      "folk.sisby.starcaller.Starcaller"
+    ],
+    "client": [
+      "folk.sisby.starcaller.client.StarcallerClient"
+    ]
+  },
+  "mixins": [
+    "starcaller.mixins.json"
+  ],
+  "accessWidener": "starcaller.accesswidener",
+  "depends": {
+    "fabricloader": ">=${fl}",
+    "fabric-api": ">=${fapi}",
+    "minecraft": ">=${mc}"
+  }
+}
