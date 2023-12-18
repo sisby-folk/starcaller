@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 
 public class JavelinItem extends Item {
     public static final int DRAW_TIME = 10;
-    public static final float THROW_VELOCITY = 2.5F;
+    public static final float THROW_VELOCITY = 25.0F;
 
     public JavelinItem(Settings settings) {
         super(settings);

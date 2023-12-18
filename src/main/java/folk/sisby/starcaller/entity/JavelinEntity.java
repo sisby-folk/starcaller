@@ -59,7 +59,11 @@ public class JavelinEntity extends PersistentProjectileEntity {
 
     @Override
     protected boolean tryPickup(PlayerEntity playerEntity) {
-        return super.tryPickup(playerEntity) || this.isNoClip() && this.isOwner(playerEntity) && playerEntity.getInventory().insertStack(this.asItemStack());
+        if (super.tryPickup(playerEntity) || this.isNoClip() && this.isOwner(playerEntity) && playerEntity.getInventory().insertStack(this.asItemStack())) {
+            playerEntity.getInventory().insertStack(Starcaller.STARDUST.getDefaultStack());
+            return true;
+        }
+        return false;
     }
 
     @Override
