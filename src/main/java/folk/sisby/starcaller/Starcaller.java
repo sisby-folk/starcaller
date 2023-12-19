@@ -3,18 +3,23 @@ package folk.sisby.starcaller;
 import folk.sisby.starcaller.entity.JavelinEntity;
 import folk.sisby.starcaller.item.JavelinItem;
 import folk.sisby.starcaller.item.StardustItem;
+import folk.sisby.starcaller.util.StarUtil;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,13 +51,25 @@ public class Starcaller implements ModInitializer {
                 LOGGER.info("[Starcaller] End Logging World Stars");
             }
         }));
-        ServerPlayConnectionEvents.JOIN.register(((handler, sender, server) -> {
-            STATE.stars.forEach(s -> {
-                handler.player.sendMessageToClient(Text.literal(s.toString()), false);
-            });
-
+        ServerTickEvents.END_WORLD_TICK.register((world -> {
+            for (ServerPlayerEntity player : world.getPlayers()) {
+                for (ItemStack handItem : player.getHandItems()) {
+                    if (handItem.isOf(JAVELIN)) {
+                        Entity camera = player.getCameraEntity();
+                        Vec3d cursorCoordinates = StarUtil.correctForSkyAngle(StarUtil.getStarCursor(camera.getYaw(), camera.getPitch()), world.getSkyAngle(1.0F));
+                        for (int i = 0; i < STATE.stars.size(); i++) {
+                            StarcallerStar star = STATE.stars.get(i);
+                            if (cursorCoordinates.isInRange(new Vec3d(star.x, star.y, star.z), 3)) {
+                                player.sendMessageToClient(Text.translatable("messages.starcaller.star.info", i, Text.translatable("star.starcaller.overworld.%s".formatted(i)), STATE.stars.get(i).toString()), true);
+                                return;
+                            }
+                        }
+                        player.sendMessageToClient(Text.literal("No Stars"), true);
+                        return;
+                    }
+                }
+            }
         }));
         LOGGER.info("[Starcaller] Initialized.");
     }
-
 }

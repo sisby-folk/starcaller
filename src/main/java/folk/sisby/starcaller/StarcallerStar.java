@@ -1,7 +1,6 @@
 package folk.sisby.starcaller;
 
 public class StarcallerStar {
-    public final String name;
     public final double x;
     public final double y;
     public final double z;
@@ -9,8 +8,7 @@ public class StarcallerStar {
     public int color;
     public String editor;
 
-    public StarcallerStar(String name, double x, double y, double z) {
-        this.name = name;
+    public StarcallerStar(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -18,6 +16,6 @@ public class StarcallerStar {
 
     @Override
     public String toString() {
-        return "Star %s at %s, %s, %s".formatted(name, x, y, z);
+        return "%s, %s, %s".formatted(Math.round(x * 100) / 100.0F, Math.round(y * 100) / 100.0F, Math.round(z * 100) / 100.0F);
     }
 }
