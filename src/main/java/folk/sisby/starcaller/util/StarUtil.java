@@ -1,5 +1,6 @@
 package folk.sisby.starcaller.util;
 
+import folk.sisby.starcaller.Starcaller;
 import folk.sisby.starcaller.StarcallerStar;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
@@ -16,23 +17,27 @@ public class StarUtil {
             double d = random.nextFloat() * 2.0F - 1.0F;
             double e = random.nextFloat() * 2.0F - 1.0F;
             double f = random.nextFloat() * 2.0F - 1.0F;
+            random.nextFloat(); // Match the random usage from the original method
             double r2 = d * d + e * e + f * f;
             if (r2 < 1.0 && r2 > 0.01) {
+                random.nextDouble(); // Match the random usage from the original method
                 double ir2 = 1.0 / Math.sqrt(r2);
                 d *= ir2;
                 e *= ir2;
                 f *= ir2;
-                list.add(new StarcallerStar(f * 100.0, e * 100.0, d * 100.0));
+                list.add(new StarcallerStar(-f * 100.0, e * 100.0, d * 100.0));
             }
         }
-        list.add(new StarcallerStar(100.0F, 0, 0));
-        list.add(new StarcallerStar(-100.0F, 0, 0));
-        list.add(new StarcallerStar(0, 100.0F, 0));
-        list.add(new StarcallerStar(0, -100.0F, 0));
-        list.add(new StarcallerStar(0, 0, 100.0F));
-        list.add(new StarcallerStar(0, 0, -100.0F));
-        list.add(new StarcallerStar(0, 70.0F, 70.0F));
-        list.add(new StarcallerStar(0, -70.0F, -70.0F));
+        if (Starcaller.DEBUG_SKY) {
+            list.add(new StarcallerStar(0, 0, 100.0F));
+            list.add(new StarcallerStar(0, 0, -100.0F));
+            list.add(new StarcallerStar(0, 100.0F, 0));
+            list.add(new StarcallerStar(0, -100.0F, 0));
+            list.add(new StarcallerStar(100.0F, 0, 0));
+            list.add(new StarcallerStar(-100.0F, 0, 0));
+            list.add(new StarcallerStar(70.0F, 0, 70.0F));
+            list.add(new StarcallerStar(-70.0F, 0, -70.0F));
+        }
         return list;
     }
 

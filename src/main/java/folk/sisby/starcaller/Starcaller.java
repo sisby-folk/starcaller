@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 public class Starcaller implements ModInitializer {
     public static final String ID = "starcaller";
     public static final Logger LOGGER = LoggerFactory.getLogger(ID);
+    public static final boolean DEBUG_SKY = false;
     public StarcallerState STATE;
 
     public static final StardustItem STARDUST = Registry.register(Registries.ITEM, new Identifier(ID, "stardust"), new StardustItem(new FabricItemSettings().maxCount(1)));
@@ -44,11 +45,13 @@ public class Starcaller implements ModInitializer {
         ServerWorldEvents.LOAD.register(((server, world) -> {
             if (world.getRegistryKey() == World.OVERWORLD) {
                 STATE = world.getPersistentStateManager().getOrCreate(StarcallerState.getPersistentStateType(), "aStarcallerState");
-                LOGGER.info("[Starcaller] Start Logging World Stars");
-                STATE.stars.forEach(s -> {
-                    LOGGER.info("[Starcaller] {}", s);
-                });
-                LOGGER.info("[Starcaller] End Logging World Stars");
+                if (Starcaller.DEBUG_SKY) {
+                    LOGGER.info("[Starcaller] Start Logging World Stars");
+                    STATE.stars.forEach(s -> {
+                        LOGGER.info("[Starcaller] {}", s);
+                    });
+                    LOGGER.info("[Starcaller] End Logging World Stars");
+                }
             }
         }));
         ServerTickEvents.END_WORLD_TICK.register((world -> {
