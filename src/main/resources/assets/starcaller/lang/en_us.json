@@ -1,5 +1,6 @@
 {
   "item.starcaller.spear": "Starcaller's Spear",
+  "item.starcaller.stardust.named": "Stardust of %s",
   "item.starcaller.stardust": "Stardust",
   "messages.starcaller.star.info": "%2$s",
   "messages.starcaller.star.info.debug": "Star %1$s '%2$s' is at %3$s",

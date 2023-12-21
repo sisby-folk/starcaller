@@ -1,7 +1,7 @@
 package folk.sisby.starcaller.util;
 
 import folk.sisby.starcaller.Starcaller;
-import folk.sisby.starcaller.StarcallerStar;
+import folk.sisby.starcaller.Star;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 
@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StarUtil {
-    public static List<StarcallerStar> generateStars(long seed) {
+    public static List<Star> generateStars(long seed) {
         Random random = Random.create(seed);
-        List<StarcallerStar> list = new ArrayList<>();
+        List<Star> list = new ArrayList<>();
 
         for (int i = 0; i < 1500; ++i) {
             double d = random.nextFloat() * 2.0F - 1.0F;
@@ -25,18 +25,18 @@ public class StarUtil {
                 d *= ir2;
                 e *= ir2;
                 f *= ir2;
-                list.add(new StarcallerStar(-f * 100.0, e * 100.0, d * 100.0));
+                list.add(new Star(new Vec3d(-f * 100.0, e * 100.0, d * 100.0)));
             }
         }
         if (Starcaller.DEBUG_SKY) {
-            list.add(new StarcallerStar(0, 0, 100.0F));
-            list.add(new StarcallerStar(0, 0, -100.0F));
-            list.add(new StarcallerStar(0, 100.0F, 0));
-            list.add(new StarcallerStar(0, -100.0F, 0));
-            list.add(new StarcallerStar(100.0F, 0, 0));
-            list.add(new StarcallerStar(-100.0F, 0, 0));
-            list.add(new StarcallerStar(70.0F, 0, 70.0F));
-            list.add(new StarcallerStar(-70.0F, 0, -70.0F));
+            list.add(new Star(new Vec3d(0, 0, 100.0F)));
+            list.add(new Star(new Vec3d(0, 0, -100.0F)));
+            list.add(new Star(new Vec3d(0, 100.0F, 0)));
+            list.add(new Star(new Vec3d(0, -100.0F, 0)));
+            list.add(new Star(new Vec3d(100.0F, 0, 0)));
+            list.add(new Star(new Vec3d(-100.0F, 0, 0)));
+            list.add(new Star(new Vec3d(70.0F, 0, 70.0F)));
+            list.add(new Star(new Vec3d(-70.0F, 0, -70.0F)));
         }
         return list;
     }
