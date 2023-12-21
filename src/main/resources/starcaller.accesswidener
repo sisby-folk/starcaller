@@ -1,3 +1,6 @@
 accessWidener v2 named
 accessible field net/minecraft/client/world/ClientWorld worldRenderer Lnet/minecraft/client/render/WorldRenderer;
 accessible method net/minecraft/client/render/WorldRenderer renderStars ()V
+accessible field net/minecraft/client/render/WorldRenderer starsBuffer Lnet/minecraft/client/gl/VertexBuffer;
+accessible method net/minecraft/client/render/WorldRenderer renderLightSky ()V
+accessible method net/minecraft/client/render/WorldRenderer renderDarkSky ()V

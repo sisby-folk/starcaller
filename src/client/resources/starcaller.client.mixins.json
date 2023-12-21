@@ -8,6 +8,7 @@
   },
   "client": [
     "MixinClientWorld",
+    "MixinInGameHud",
     "MixinWorldRenderer"
   ]
 }

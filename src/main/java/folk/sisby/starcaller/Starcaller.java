@@ -2,31 +2,26 @@ package folk.sisby.starcaller;
 
 import folk.sisby.starcaller.item.SpearItem;
 import folk.sisby.starcaller.item.StardustItem;
-import folk.sisby.starcaller.util.StarUtil;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Comparator;
 import java.util.Map;
 
 public class Starcaller implements ModInitializer {
@@ -34,7 +29,7 @@ public class Starcaller implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(ID);
     public static final boolean DEBUG_SKY = false;
     public static final long STAR_SEED = 10842L;
-    public static final int STAR_GROUNDED_TICKS = 1200;
+    public static final int STAR_GROUNDED_TICKS = 600;
     public static StarState STATE;
 
     public static final Identifier S2C_UPDATE_GROUNDED = new Identifier(ID, "update_grounded");
@@ -58,24 +53,13 @@ public class Starcaller implements ModInitializer {
             }
         }));
         ServerTickEvents.END_WORLD_TICK.register((world -> {
-            for (ServerPlayerEntity player : world.getPlayers()) {
-                for (ItemStack handItem : player.getHandItems()) {
-                    if (handItem.isOf(SPEAR)) {
-                        if (player.raycast(world.getServer().getPlayerManager().getViewDistance() * 16, 1.0F, false).getType() == HitResult.Type.MISS) {
-                            Vec3d cursorCoordinates = StarUtil.correctForSkyAngle(StarUtil.getStarCursor(player.getHeadYaw(), player.getPitch()), world.getSkyAngle(1.0F));
-                            Star closestStar = STATE.stars.stream().min(Comparator.comparingDouble(s -> s.pos.squaredDistanceTo(cursorCoordinates))).get();
-                            if (cursorCoordinates.isInRange(closestStar.pos, 4)) {
-                                int i = STATE.stars.indexOf(closestStar);
-                                player.sendMessageToClient(Text.translatable("messages.starcaller.star.info" + (DEBUG_SKY ? ".debug" : ""), i, Text.translatable("star.starcaller.overworld.%s".formatted(i)).formatted(Formatting.ITALIC), STATE.stars.get(i).toString()), true);
-                                return;
-                            }
-                            player.sendMessageToClient(Text.empty(), true);
-                            return;
-                        }
-                    }
+            for (Star star : STATE.stars) {
+                if (world.getTime() > star.groundedTick + Starcaller.STAR_GROUNDED_TICKS) {
+                    star.groundedTick = -1;
                 }
             }
         }));
+        ServerPlayConnectionEvents.JOIN.register(((handler, sender, server) -> syncInitialStars(sender)));
         LOGGER.info("[Starcaller] Initialized.");
     }
 
@@ -113,5 +97,30 @@ public class Starcaller implements ModInitializer {
                 ServerPlayNetworking.send(player, S2C_UPDATE_COLORS, buf);
             }
         }
+    }
+
+    public static void syncInitialStars(PacketSender sender) {
+        Map<Integer, Long> groundedMap = new Int2ObjectArrayMap<>();
+        for (Star star : STATE.stars) {
+            if (star.groundedTick != Star.DEFAULT_GROUNDED_TICK) groundedMap.put(STATE.stars.indexOf(star), star.groundedTick);
+        }
+        PacketByteBuf groundedBuf = PacketByteBufs.create();
+        groundedBuf.writeMap(
+                groundedMap,
+                PacketByteBuf::writeInt,
+                PacketByteBuf::writeLong
+        );
+        sender.sendPacket(S2C_UPDATE_GROUNDED, groundedBuf);
+        Map<Integer, Integer> colorMap = new Int2ObjectArrayMap<>();
+        for (Star star : STATE.stars) {
+            if (star.color != Star.DEFAULT_COLOR) colorMap.put(STATE.stars.indexOf(star), star.color);
+        }
+        PacketByteBuf colorBuf = PacketByteBufs.create();
+        colorBuf.writeMap(
+                colorMap,
+                PacketByteBuf::writeInt,
+                PacketByteBuf::writeInt
+        );
+        sender.sendPacket(S2C_UPDATE_GROUNDED, colorBuf);
     }
 }

@@ -4,6 +4,14 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.Vec3d;
 
 public class Star {
+    public static final int DEFAULT_COLOR = 0xFFFFFFFF;
+    public static final int DEFAULT_EDITOR_COLOR = 0xFFFFFF;
+    public static final long DEFAULT_GROUNDED_TICK = -1;
+    public static final String KEY_GROUNDED_TICK = "groundedTick";
+    public static final String KEY_COLOR = "color";
+    public static final String KEY_EDITOR = "editor";
+    public static final String KEY_EDITOR_COLOR = "groundedTick";
+
     public final Vec3d pos;
     public long groundedTick;
     public int color;
@@ -16,27 +24,27 @@ public class Star {
     }
 
     public void readData(Long groundedTick, Integer color, String editor, Integer editorColor) {
-        this.groundedTick = groundedTick != null ? groundedTick : -1;
-        this.color = color != null ? color : 0xFFFFFF;
+        this.groundedTick = groundedTick != null ? groundedTick : DEFAULT_GROUNDED_TICK;
+        this.color = color != null ? color : DEFAULT_COLOR;
         this.editor = editor;
-        this.editorColor = editorColor != null ? editorColor : 0xFFFFFF;
+        this.editorColor = editorColor != null ? editorColor : DEFAULT_EDITOR_COLOR;
     }
 
     public void readNbt(NbtCompound nbt) {
         readData(
-                nbt.contains("groundedTick") ? nbt.getLong("groundedTick") : null,
-                nbt.contains("color") ? nbt.getInt("color") : null,
-                nbt.contains("editor") ? nbt.getString("editor") : null,
-                nbt.contains("color") ? nbt.getInt("color") : null
+                nbt.contains(KEY_GROUNDED_TICK) ? nbt.getLong(KEY_GROUNDED_TICK) : null,
+                nbt.contains(KEY_COLOR) ? nbt.getInt(KEY_COLOR) : null,
+                nbt.contains(KEY_EDITOR) ? nbt.getString(KEY_EDITOR) : null,
+                nbt.contains(KEY_EDITOR_COLOR) ? nbt.getInt(KEY_EDITOR_COLOR) : null
         );
     }
 
     public NbtCompound toNbt() {
         NbtCompound starCompound = new NbtCompound();
-        if (groundedTick != -1) starCompound.putLong("groundedTick", groundedTick);
-        if (color != 0xFFFFFF) starCompound.putInt("color", color);
-        if (editor != null) starCompound.putString("editor", editor);
-        if (editorColor != 0xFFFFFF) starCompound.putInt("color", color);
+        if (groundedTick != DEFAULT_GROUNDED_TICK) starCompound.putLong(KEY_GROUNDED_TICK, groundedTick);
+        if (color != DEFAULT_COLOR) starCompound.putInt(KEY_COLOR, color);
+        if (editor != null) starCompound.putString(KEY_EDITOR, editor);
+        if (editorColor != DEFAULT_EDITOR_COLOR) starCompound.putInt(KEY_EDITOR_COLOR, color);
         return starCompound;
     }
 

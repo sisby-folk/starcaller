@@ -11,7 +11,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
-import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
@@ -52,11 +51,8 @@ public class SpearItem extends Item {
                         Star closestStar = Starcaller.STATE.stars.stream().min(Comparator.comparingDouble(s -> s.pos.squaredDistanceTo(cursorCoordinates))).get();
                         if (cursorCoordinates.isInRange(closestStar.pos, 4)) {
                             int starIndex = Starcaller.STATE.stars.indexOf(closestStar);
-                            ItemStack stack = Starcaller.STARDUST.getDefaultStack();
-                            stack.setCustomName(Text.translatable("item.starcaller.stardust.named", Text.translatable("star.starcaller.overworld.%s".formatted(starIndex))));
-                            player.getInventory().offerOrDrop(stack);
-                            player.getInventory().removeOne(itemStack);
                             Starcaller.groundStar(null, (ServerWorld) world, closestStar);
+                            player.getInventory().offerOrDrop(StardustItem.fromStar(starIndex, closestStar));
                             return;
                         }
                         return;

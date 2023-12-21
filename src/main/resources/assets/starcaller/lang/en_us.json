@@ -1,8 +1,9 @@
 {
   "item.starcaller.spear": "Starcaller's Spear",
-  "item.starcaller.stardust.named": "Stardust of %s",
   "item.starcaller.stardust": "Stardust",
-  "messages.starcaller.star.info": "%2$s",
+  "item.starcaller.stardust.named": "%s Stardust",
+  "item.starcaller.stardust.editor": "Recolored by %s",
+  "messages.starcaller.star.info": "%s",
   "messages.starcaller.star.info.debug": "Star %1$s '%2$s' is at %3$s",
   "star.starcaller.overworld.empty": "Empty Space",
   "star.starcaller.overworld.0": "Absolutno",

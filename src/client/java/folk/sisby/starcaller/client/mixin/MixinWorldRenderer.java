@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 @Mixin(WorldRenderer.class)
 public class MixinWorldRenderer {
@@ -35,7 +36,6 @@ public class MixinWorldRenderer {
         starIndex = -1;
     }
 
-
     @Inject(method = "renderStars(Lnet/minecraft/client/render/BufferBuilder;)Lnet/minecraft/client/render/BufferBuilder$BuiltBuffer;", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/random/Random;nextDouble()D"), locals = LocalCapture.CAPTURE_FAILHARD)
     public void setHasDrawn(BufferBuilder bufferBuilder, CallbackInfoReturnable<BufferBuilder.BuiltBuffer> cir, Random random, int i, double d, double e, double f, double g, double h, double j, double k, double l, double m, double n, double o, double p, double q, double r) {
         if (Starcaller.DEBUG_SKY) {
@@ -46,7 +46,7 @@ public class MixinWorldRenderer {
 
     @ModifyReceiver(method = "renderStars(Lnet/minecraft/client/render/BufferBuilder;)Lnet/minecraft/client/render/BufferBuilder$BuiltBuffer;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumer;next()V"))
     public VertexConsumer setColorPerStar(VertexConsumer instance, BufferBuilder builder) {
-        int color = 0xFFFFFFFF;
+        int color = Star.DEFAULT_COLOR;
         if (world instanceof StarcallerClientWorld scw) {
             List<Star> stars = scw.starcaller$getStars();
             if (starIndex < stars.size()) {
@@ -60,6 +60,11 @@ public class MixinWorldRenderer {
             }
         }
         return instance.color(color);
+    }
+
+    @ModifyArg(method = "renderStars()V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShader(Ljava/util/function/Supplier;)V"), index = 0)
+    public Supplier<ShaderProgram> useColorSupplier(Supplier<ShaderProgram> supplier) {
+        return GameRenderer::getPositionColorProgram;
     }
 
     @ModifyArg(method = "renderStars(Lnet/minecraft/client/render/BufferBuilder;)Lnet/minecraft/client/render/BufferBuilder$BuiltBuffer;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/BufferBuilder;begin(Lnet/minecraft/client/render/VertexFormat$DrawMode;Lnet/minecraft/client/render/VertexFormat;)V"), index = 1)
