@@ -13,15 +13,15 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class JavelinEntity extends PersistentProjectileEntity {
-    private static final ItemStack DEFAULT_STACK = new ItemStack(Starcaller.JAVELIN);
+public class SpearEntity extends PersistentProjectileEntity {
+    private static final ItemStack DEFAULT_STACK = new ItemStack(Starcaller.SPEAR);
 
-    public JavelinEntity(EntityType<? extends JavelinEntity> entityType, World world) {
+    public SpearEntity(EntityType<? extends SpearEntity> entityType, World world) {
         super(entityType, world, DEFAULT_STACK);
     }
 
-    public JavelinEntity(World world, LivingEntity livingEntity, ItemStack itemStack) {
-        super(Starcaller.JAVELIN_ENTITY, livingEntity, world, itemStack);
+    public SpearEntity(World world, LivingEntity livingEntity, ItemStack itemStack) {
+        super(Starcaller.SPEAR_ENTITY, livingEntity, world, itemStack);
     }
 
     @Override

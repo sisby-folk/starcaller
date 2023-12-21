@@ -1,6 +1,6 @@
 package folk.sisby.starcaller.item;
 
-import folk.sisby.starcaller.entity.JavelinEntity;
+import folk.sisby.starcaller.entity.SpearEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -13,11 +13,11 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 
-public class JavelinItem extends Item {
+public class SpearItem extends Item {
     public static final int DRAW_TIME = 10;
     public static final float THROW_VELOCITY = 25.0F;
 
-    public JavelinItem(Settings settings) {
+    public SpearItem(Settings settings) {
         super(settings);
     }
 
@@ -39,7 +39,7 @@ public class JavelinItem extends Item {
             int j = this.getMaxUseTime(itemStack) - i;
             if (j >= DRAW_TIME) {
                 if (!world.isClient) {
-                    JavelinEntity entity = new JavelinEntity(world, playerEntity, itemStack);
+                    SpearEntity entity = new SpearEntity(world, playerEntity, itemStack);
                     entity.setVelocity(playerEntity, playerEntity.getPitch(), playerEntity.getYaw(), 0.0F, THROW_VELOCITY, 1.0F);
                     world.spawnEntity(entity);
                     world.playSoundFromEntity(null, entity, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0F, 1.0F);

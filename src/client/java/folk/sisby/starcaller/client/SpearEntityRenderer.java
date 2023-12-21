@@ -1,6 +1,6 @@
 package folk.sisby.starcaller.client;
 
-import folk.sisby.starcaller.entity.JavelinEntity;
+import folk.sisby.starcaller.entity.SpearEntity;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -14,16 +14,16 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 
-public class JavelinEntityRenderer extends EntityRenderer<JavelinEntity> {
+public class SpearEntityRenderer extends EntityRenderer<SpearEntity> {
     public static final Identifier TEXTURE = new Identifier("textures/entity/trident.png");
     private final TridentEntityModel model;
 
-    public JavelinEntityRenderer(EntityRendererFactory.Context context) {
+    public SpearEntityRenderer(EntityRendererFactory.Context context) {
         super(context);
         this.model = new TridentEntityModel(context.getPart(EntityModelLayers.TRIDENT));
     }
 
-    public void render(JavelinEntity entity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
+    public void render(SpearEntity entity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i) {
         matrixStack.push();
         matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(MathHelper.lerp(g, entity.prevYaw, entity.getYaw()) - 90.0F));
         matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(MathHelper.lerp(g, entity.prevPitch, entity.getPitch()) + 90.0F));
@@ -35,7 +35,7 @@ public class JavelinEntityRenderer extends EntityRenderer<JavelinEntity> {
         super.render(entity, f, g, matrixStack, vertexConsumerProvider, i);
     }
 
-    public Identifier getTexture(JavelinEntity entity) {
+    public Identifier getTexture(SpearEntity entity) {
         return TEXTURE;
     }
 }

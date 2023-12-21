@@ -1,7 +1,7 @@
 package folk.sisby.starcaller;
 
-import folk.sisby.starcaller.entity.JavelinEntity;
-import folk.sisby.starcaller.item.JavelinItem;
+import folk.sisby.starcaller.entity.SpearEntity;
+import folk.sisby.starcaller.item.SpearItem;
 import folk.sisby.starcaller.item.StardustItem;
 import folk.sisby.starcaller.util.StarUtil;
 import net.fabricmc.api.ModInitializer;
@@ -18,11 +18,15 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Comparator;
 
 public class Starcaller implements ModInitializer {
     public static final String ID = "starcaller";
@@ -31,9 +35,9 @@ public class Starcaller implements ModInitializer {
     public StarcallerState STATE;
 
     public static final StardustItem STARDUST = Registry.register(Registries.ITEM, new Identifier(ID, "stardust"), new StardustItem(new FabricItemSettings().maxCount(1)));
-    public static final JavelinItem JAVELIN = Registry.register(Registries.ITEM, new Identifier(ID, "javelin"), new JavelinItem(new FabricItemSettings().maxCount(1)));
-    public static final EntityType<JavelinEntity> JAVELIN_ENTITY = Registry.register(Registries.ENTITY_TYPE, new Identifier(ID, "javelin"),
-            FabricEntityTypeBuilder.<JavelinEntity>create(SpawnGroup.MISC, JavelinEntity::new)
+    public static final SpearItem SPEAR = Registry.register(Registries.ITEM, new Identifier(ID, "spear"), new SpearItem(new FabricItemSettings().maxCount(1)));
+    public static final EntityType<SpearEntity> SPEAR_ENTITY = Registry.register(Registries.ENTITY_TYPE, new Identifier(ID, "spear"),
+            FabricEntityTypeBuilder.<SpearEntity>create(SpawnGroup.MISC, SpearEntity::new)
                     .dimensions(EntityDimensions.fixed(0.5F, 0.5F))
                     .trackRangeChunks(4)
                     .trackedUpdateRate(20)
@@ -57,18 +61,19 @@ public class Starcaller implements ModInitializer {
         ServerTickEvents.END_WORLD_TICK.register((world -> {
             for (ServerPlayerEntity player : world.getPlayers()) {
                 for (ItemStack handItem : player.getHandItems()) {
-                    if (handItem.isOf(JAVELIN)) {
+                    if (handItem.isOf(SPEAR)) {
                         Entity camera = player.getCameraEntity();
-                        Vec3d cursorCoordinates = StarUtil.correctForSkyAngle(StarUtil.getStarCursor(camera.getYaw(), camera.getPitch()), world.getSkyAngle(1.0F));
-                        for (int i = 0; i < STATE.stars.size(); i++) {
-                            StarcallerStar star = STATE.stars.get(i);
-                            if (cursorCoordinates.isInRange(new Vec3d(star.x, star.y, star.z), 3)) {
-                                player.sendMessageToClient(Text.translatable("messages.starcaller.star.info", i, Text.translatable("star.starcaller.overworld.%s".formatted(i)), STATE.stars.get(i).toString()), true);
+                        if (player.raycast(world.getServer().getPlayerManager().getViewDistance() * 16, 1.0F, false).getType() == HitResult.Type.MISS) {
+                            Vec3d cursorCoordinates = StarUtil.correctForSkyAngle(StarUtil.getStarCursor(camera.getYaw(), camera.getPitch()), world.getSkyAngle(1.0F));
+                            StarcallerStar closestStar = STATE.stars.stream().min(Comparator.comparingDouble(s -> s.pos.squaredDistanceTo(cursorCoordinates))).get();
+                            if (cursorCoordinates.isInRange(closestStar.pos, 4)) {
+                                int i = STATE.stars.indexOf(closestStar);
+                                player.sendMessageToClient(Text.translatable("messages.starcaller.star.info" + (DEBUG_SKY ? ".debug" : ""), i, Text.translatable("star.starcaller.overworld.%s".formatted(i)).formatted(Formatting.ITALIC), STATE.stars.get(i).toString()), true);
                                 return;
                             }
+                            player.sendMessageToClient(Text.empty(), true);
+                            return;
                         }
-                        player.sendMessageToClient(Text.literal("No Stars"), true);
-                        return;
                     }
                 }
             }

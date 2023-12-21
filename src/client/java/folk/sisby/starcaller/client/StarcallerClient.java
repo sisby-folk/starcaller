@@ -18,13 +18,13 @@ public class StarcallerClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        EntityRendererRegistry.register(Starcaller.JAVELIN_ENTITY, JavelinEntityRenderer::new);
+        EntityRendererRegistry.register(Starcaller.SPEAR_ENTITY, SpearEntityRenderer::new);
         ModelPredicateProviderRegistry.register(
-                Starcaller.JAVELIN,
+                Starcaller.SPEAR,
                 new Identifier("throwing"),
                 (stack, world, entity, i) -> entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F
         );
-        ColorProviderRegistry.ITEM.register((stack, index) -> (index > 0) ? (0x888888 +  random.nextInt(127)) : -1, Starcaller.JAVELIN);
+        ColorProviderRegistry.ITEM.register((stack, index) -> (index > 0) ? (0x888888 +  random.nextInt(127)) : -1, Starcaller.SPEAR);
         LOGGER.info("[Starcaller Client] Initialized.");
     }
 }
