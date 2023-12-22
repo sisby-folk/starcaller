@@ -18,6 +18,6 @@ _Starcaller_ allows players to:
 
 ### Afterword
 
-All mods are built on the work of many others.
+All mods are built on the work of many others. Please support the community!
 
-We made this mod for [Modfest 1.20: Sky and Sea](https://modfest.net/1.20)! - and probably won't expand it into survival or other versions. 
+<a href="https://modfest.net/1.20"><img alt="modfest 1.20 banner" width="600" src="https://raw.githubusercontent.com/ModFest/art/main/4096w/ModFest%201.20%20Poster.png"/></a>
