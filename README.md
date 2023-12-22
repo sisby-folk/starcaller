@@ -16,6 +16,10 @@ _Starcaller_ allows players to:
 
 ![star dyeing](https://cdn.modrinth.com/data/z7IRTW7F/images/6860bcb970b2dd1ba7aa4afb1f72e05e81a21081.gif)
 
+This mod is oriented towards being a toy rather than for survival, but for completeness, a recipe is included:
+
+![spear recipe](https://cdn.modrinth.com/data/z7IRTW7F/images/12587366dbec240bd55357840bf9164f18d08b7d.png)
+
 ### Afterword
 
 All mods are built on the work of many others. Please support the community!

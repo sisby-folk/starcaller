@@ -27,6 +27,7 @@ import java.util.List;
 
 public class SpearItem extends Item {
     public static final int DRAW_TIME = 10;
+    public static final int COOLDOWN_TICKS = 10;
 
     public SpearItem(Settings settings) {
         super(settings);
@@ -71,12 +72,11 @@ public class SpearItem extends Item {
                             int starIndex = ((StarcallerWorld) world).starcaller$getStars().indexOf(closestStar);
                             scw.starcaller$groundStar(player, closestStar);
                             player.getInventory().offerOrDrop(StardustItem.fromStar(starIndex, closestStar));
-                            return;
                         }
-                        return;
                     }
                 }
                 player.incrementStat(Stats.USED.getOrCreateStat(this));
+                player.getItemCooldownManager().set(this, COOLDOWN_TICKS);
             }
         }
     }
