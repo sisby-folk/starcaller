@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StarUtil {
-    public static List<Star> generateStars(long seed) {
+    public static List<Star> generateStars(long seed, int iterations) {
         Random random = Random.create(seed);
         List<Star> list = new ArrayList<>();
 
-        for (int i = 0; i < 1500; ++i) {
+        for (int i = 0; i < iterations; ++i) {
             double d = random.nextFloat() * 2.0F - 1.0F;
             double e = random.nextFloat() * 2.0F - 1.0F;
             double f = random.nextFloat() * 2.0F - 1.0F;

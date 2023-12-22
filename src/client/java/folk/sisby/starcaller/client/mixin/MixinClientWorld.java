@@ -26,11 +26,13 @@ import java.util.function.Supplier;
 
 @Mixin(ClientWorld.class)
 public abstract class MixinClientWorld implements StarcallerWorld {
-    @Unique private List<Star> starCaller$stars;
+    @Unique private long starcaller$seed = Starcaller.STAR_SEED;
+    @Unique private int starcaller$iterations = Starcaller.STAR_ITERATIONS;
+    @Unique private List<Star> starcaller$stars;
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void generateStars(ClientPlayNetworkHandler clientPlayNetworkHandler, ClientWorld.Properties properties, RegistryKey<World> registryKey, RegistryEntry<World> registryEntry, int i, int j, Supplier<Profiler> supplier, WorldRenderer worldRenderer, boolean bl, long l, CallbackInfo ci) {
-        starCaller$stars = StarUtil.generateStars(Starcaller.STAR_SEED);
+        starcaller$stars = StarUtil.generateStars(starcaller$seed, starcaller$iterations);
     }
 
     @Inject(method = "method_23787", at = @At("HEAD"), cancellable = true)
@@ -42,23 +44,43 @@ public abstract class MixinClientWorld implements StarcallerWorld {
     }
 
     @Override
-    public List<Star> starcaller$getStars() {
-        return starCaller$stars;
-    }
-
-    @Override
     public void starcaller$groundStar(PlayerEntity cause, Star star) {
-        StarcallerClient.groundStar(cause, ((ClientWorld) (Object) this), star);
+        StarcallerClient.groundStar(((ClientWorld) (Object) this), star);
     }
 
 
     @Override
     public void starcaller$freeStar(PlayerEntity cause, Star star) {
-        StarcallerClient.freeStar(cause, ((ClientWorld) (Object) this), star);
+        StarcallerClient.freeStar(star);
     }
 
     @Override
     public void starcaller$colorStar(PlayerEntity cause, Star star, int color) {
         StarcallerClient.colorStar(cause, star, color);
+    }
+
+    @Override
+    public long starcaller$getSeed() {
+        return starcaller$seed;
+    }
+
+    @Override
+    public int starcaller$getIterations() {
+        return starcaller$iterations;
+    }
+
+    @Override
+    public List<Star> starcaller$getStars() {
+        return starcaller$stars;
+    }
+
+    @Override
+    public void starcaller$setSeed(long seed) {
+        this.starcaller$seed = seed;
+    }
+
+    @Override
+    public void starcaller$setIterations(int iterations) {
+        this.starcaller$iterations = iterations;
     }
 }

@@ -6,7 +6,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import java.util.List;
 
 public interface StarcallerWorld {
+    long starcaller$getSeed();
+    int starcaller$getIterations();
     List<Star> starcaller$getStars();
+
+    void starcaller$setSeed(long seed);
+    void starcaller$setIterations(int iterations);
 
     void starcaller$groundStar(PlayerEntity cause, Star star);
 
