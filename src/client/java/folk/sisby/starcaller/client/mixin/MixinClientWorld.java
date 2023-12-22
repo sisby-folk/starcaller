@@ -51,12 +51,12 @@ public abstract class MixinClientWorld implements StarcallerWorld {
 
     @Override
     public void starcaller$freeStar(PlayerEntity cause, Star star) {
-        StarcallerClient.freeStar(star);
+        StarcallerClient.freeStar(((ClientWorld) (Object) this), star);
     }
 
     @Override
     public void starcaller$colorStar(PlayerEntity cause, Star star, int color) {
-        StarcallerClient.colorStar(cause, star, color);
+        StarcallerClient.colorStar(cause, ((ClientWorld) (Object) this), star, color);
     }
 
     @Override

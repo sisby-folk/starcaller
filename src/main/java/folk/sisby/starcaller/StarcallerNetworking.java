@@ -4,7 +4,6 @@ import folk.sisby.starcaller.duck.StarcallerWorld;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
@@ -21,7 +20,6 @@ public class StarcallerNetworking {
     public static final Identifier S2C_UPDATE_COLORS = Starcaller.id("update_colors");
 
     public static void init() {
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> sendInitialStarState(handler.player));
         ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, destination) -> sendInitialStarState(player));
     }
 

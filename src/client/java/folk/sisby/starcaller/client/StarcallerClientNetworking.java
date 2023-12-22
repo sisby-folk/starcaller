@@ -20,37 +20,39 @@ public class StarcallerClientNetworking {
     }
 
     private static void setInitialStarState(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
-        if (client.player != null && client.player.clientWorld instanceof StarcallerWorld scw) {
-            scw.starcaller$setSeed(buf.readLong());
-            scw.starcaller$setIterations(buf.readInt());
-            updateGrounded(client, handler, buf, responseSender);
-            updateColors(client, handler, buf, responseSender);
-        }
+        client.execute(() -> {
+            if (client.world instanceof StarcallerWorld scw) {
+                scw.starcaller$setSeed(buf.readLong());
+                scw.starcaller$setIterations(buf.readInt());
+                updateGrounded(client, handler, buf, responseSender);
+                updateColors(client, handler, buf, responseSender);
+            }
+        });
     }
 
     private static void updateGrounded(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         Map<Integer, Long> groundedMap = buf.readMap(PacketByteBuf::readInt, PacketByteBuf::readLong);
-        if (client.player != null && client.player.getWorld() instanceof StarcallerWorld scw) {
+        if (client.world instanceof StarcallerWorld scw) {
             List<Star> stars = scw.starcaller$getStars();
             groundedMap.forEach((index, groundedTick) -> {
                 if (index < stars.size()) {
                     stars.get(index).groundedTick = groundedTick;
                 }
             });
-            StarcallerClient.reloadStars(client.player.clientWorld);
+            StarcallerClient.reloadStars(client.world);
         }
     }
 
     private static void updateColors(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
         Map<Integer, Integer> colorMap = buf.readMap(PacketByteBuf::readInt, PacketByteBuf::readInt);
-        if (client.player != null && client.player.getWorld() instanceof StarcallerWorld scw) {
+        if (client.world instanceof StarcallerWorld scw) {
             List<Star> stars = scw.starcaller$getStars();
             colorMap.forEach((index, color) -> {
                 if (index < stars.size()) {
                     stars.get(index).color = color;
                 }
             });
-            StarcallerClient.reloadStars(client.player.clientWorld);
+            StarcallerClient.reloadStars(client.world);
         }
     }
 }

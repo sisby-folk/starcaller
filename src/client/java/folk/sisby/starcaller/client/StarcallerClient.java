@@ -37,17 +37,20 @@ public class StarcallerClient implements ClientModInitializer {
 
     public static void groundStar(ClientWorld world, Star star) {
         star.groundedTick = world.getTime();
+        reloadStars(world);
     }
 
-    public static void freeStar(Star star) {
+    public static void freeStar(ClientWorld world, Star star) {
         star.groundedTick = -1;
+        reloadStars(world);
     }
 
-    public static void colorStar(PlayerEntity cause, Star star, int color) {
+    public static void colorStar(PlayerEntity cause, ClientWorld world, Star star, int color) {
         star.color = color;
         TextColor nameColor = cause.getDisplayName().getStyle().getColor();
         star.editor = cause.getDisplayName().getString();
         star.editorColor = nameColor != null ? nameColor.getRgb() : 0xFFFFFF;
+        reloadStars(world);
     }
 
     public static void reloadStars(ClientWorld world) {
