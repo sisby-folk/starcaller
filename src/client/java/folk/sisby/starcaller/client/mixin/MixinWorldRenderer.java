@@ -3,7 +3,7 @@ package folk.sisby.starcaller.client.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import folk.sisby.starcaller.Star;
 import folk.sisby.starcaller.Starcaller;
-import folk.sisby.starcaller.client.duck.StarcallerClientWorld;
+import folk.sisby.starcaller.duck.StarcallerWorld;
 import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @Mixin(WorldRenderer.class)
-public class MixinWorldRenderer {
+public abstract class MixinWorldRenderer {
     @Shadow private @Nullable ClientWorld world;
     @Unique private int starIndex = -1;
 
@@ -47,7 +47,7 @@ public class MixinWorldRenderer {
     @ModifyReceiver(method = "renderStars(Lnet/minecraft/client/render/BufferBuilder;)Lnet/minecraft/client/render/BufferBuilder$BuiltBuffer;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumer;next()V"))
     public VertexConsumer setColorPerStar(VertexConsumer instance, BufferBuilder builder) {
         int color = Star.DEFAULT_COLOR;
-        if (world instanceof StarcallerClientWorld scw) {
+        if (world instanceof StarcallerWorld scw) {
             List<Star> stars = scw.starcaller$getStars();
             if (starIndex < stars.size()) {
                 Star star = stars.get(starIndex);

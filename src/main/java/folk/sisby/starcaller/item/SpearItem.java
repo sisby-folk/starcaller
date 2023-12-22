@@ -1,13 +1,12 @@
 package folk.sisby.starcaller.item;
 
 import folk.sisby.starcaller.Star;
-import folk.sisby.starcaller.Starcaller;
+import folk.sisby.starcaller.duck.StarcallerWorld;
 import folk.sisby.starcaller.util.StarUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
@@ -45,13 +44,13 @@ public class SpearItem extends Item {
             int j = this.getMaxUseTime(itemStack) - i;
             if (j >= DRAW_TIME) {
                 world.playSoundFromEntity(player, player, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0F, 1.0F);
-                if (!world.isClient) {
-                    if (player.raycast(world.getServer().getPlayerManager().getViewDistance() * 16, 1.0F, false).getType() == HitResult.Type.MISS) {
+                if (world instanceof StarcallerWorld scw) {
+                    if (player.raycast(12 * 16, 1.0F, false).getType() == HitResult.Type.MISS) {
                         Vec3d cursorCoordinates = StarUtil.correctForSkyAngle(StarUtil.getStarCursor(player.getHeadYaw(), player.getPitch()), world.getSkyAngle(1.0F));
-                        Star closestStar = Starcaller.STATE.stars.stream().min(Comparator.comparingDouble(s -> s.pos.squaredDistanceTo(cursorCoordinates))).get();
+                        Star closestStar = ((StarcallerWorld) world).starcaller$getStars().stream().min(Comparator.comparingDouble(s -> s.pos.squaredDistanceTo(cursorCoordinates))).get();
                         if (cursorCoordinates.isInRange(closestStar.pos, 4)) {
-                            int starIndex = Starcaller.STATE.stars.indexOf(closestStar);
-                            Starcaller.groundStar(null, (ServerWorld) world, closestStar);
+                            int starIndex = ((StarcallerWorld) world).starcaller$getStars().indexOf(closestStar);
+                            scw.starcaller$groundStar(player, closestStar);
                             player.getInventory().offerOrDrop(StardustItem.fromStar(starIndex, closestStar));
                             return;
                         }

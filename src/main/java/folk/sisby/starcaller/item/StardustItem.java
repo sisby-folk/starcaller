@@ -2,6 +2,7 @@ package folk.sisby.starcaller.item;
 
 import folk.sisby.starcaller.Star;
 import folk.sisby.starcaller.Starcaller;
+import folk.sisby.starcaller.duck.StarcallerWorld;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,6 +21,7 @@ import java.util.List;
 public class StardustItem extends Item implements DyeableItem {
     public static final String KEY_STAR_INDEX = "star";
     public static final String KEY_STAR_GROUNDED_TICK = "groundedTick";
+    public static final String KEY_STAR_DISPLAY = "display";
     public static final String KEY_STAR_COLOR = "color";
     public static final String KEY_EDITOR = "editor";
     public static final String KEY_EDITOR_COLOR = "editorColor";
@@ -34,70 +36,88 @@ public class StardustItem extends Item implements DyeableItem {
         NbtCompound nbt = stack.getOrCreateNbt();
         nbt.putInt(KEY_STAR_INDEX, index);
         nbt.putLong(KEY_STAR_GROUNDED_TICK, star.groundedTick);
-        nbt.putInt(KEY_STAR_COLOR, star.color);
+        NbtCompound display = new NbtCompound();
+        display.putInt(KEY_STAR_COLOR, star.color);
+        nbt.put(KEY_STAR_DISPLAY, display);
         if (star.editor != null) nbt.putString(KEY_EDITOR, star.editor);
         nbt.putInt(KEY_EDITOR_COLOR, star.editorColor);
         return stack;
     }
 
     @Override
-    public Text getName(ItemStack itemStack) {
-        if (itemStack.hasNbt() && itemStack.getNbt().contains(KEY_STAR_INDEX)) {
-            return Text.translatable("item.starcaller.stardust.named", Text.translatable("star.starcaller.overworld.%s".formatted(itemStack.getNbt().getInt(KEY_STAR_INDEX)))
-                    .setStyle(Style.EMPTY.withFormatting(Formatting.ITALIC).withColor(itemStack.getNbt().getInt(KEY_STAR_COLOR)))
-            );
+    public Text getName(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        if (nbt != null && nbt.contains(KEY_STAR_INDEX)) {
+            return Text.translatable("item.starcaller.stardust.named", Text.translatable("star.starcaller.overworld.%s".formatted(nbt.getInt(KEY_STAR_INDEX)))
+                    .setStyle(Style.EMPTY.withFormatting(Formatting.ITALIC).withColor(nbt.getCompound(KEY_STAR_DISPLAY).getInt(KEY_STAR_COLOR)))
+            ).formatted(Formatting.GRAY);
         }
-        return super.getName(itemStack);
+        return super.getName(stack);
     }
 
     @Override
-    public void appendTooltip(ItemStack itemStack, @Nullable World world, List<Text> list, TooltipContext tooltipContext) {
-        super.appendTooltip(itemStack, world, list, tooltipContext);
-        if (itemStack.hasNbt() && itemStack.getNbt().contains(KEY_EDITOR) && itemStack.getNbt().contains(KEY_EDITOR_COLOR)) {
-            list.add(Text.translatable("item.starcaller.stardust.editor", Text.literal(itemStack.getNbt().getString(KEY_EDITOR)).setStyle(Style.EMPTY.withColor(itemStack.getNbt().getInt(KEY_EDITOR_COLOR)))));
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> list, TooltipContext tooltipContext) {
+        NbtCompound nbt = stack.getNbt();
+        super.appendTooltip(stack, world, list, tooltipContext);
+        if (nbt != null) {
+            if (nbt.contains(KEY_EDITOR) && nbt.contains(KEY_EDITOR_COLOR)) {
+                list.add(Text.translatable("item.starcaller.stardust.editor", Text.literal(nbt.getString(KEY_EDITOR)).setStyle(Style.EMPTY.withColor(nbt.getInt(KEY_EDITOR_COLOR)))).formatted(Formatting.GRAY));
+            }
+            if (nbt.contains(KEY_REMAINING_TICKS)) {
+                list.add(Text.translatable("item.starcaller.stardust.countdown", Text.literal(String.valueOf(nbt.getLong(KEY_REMAINING_TICKS) / 20)).formatted(Formatting.GOLD)).formatted(Formatting.DARK_GRAY));
+            }
         }
     }
 
     @Override
-    public boolean isItemBarVisible(ItemStack itemStack) {
-        return itemStack.hasNbt() && itemStack.getNbt().contains(KEY_REMAINING_TICKS);
+    public boolean isItemBarVisible(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        return nbt != null && nbt.contains(KEY_REMAINING_TICKS);
     }
 
     @Override
-    public int getItemBarStep(ItemStack itemStack) {
-        if (itemStack.hasNbt() && itemStack.getNbt().contains(KEY_REMAINING_TICKS)) {
-            return (int) (itemStack.getNbt().getLong(KEY_REMAINING_TICKS) * 13.0F / Starcaller.STAR_GROUNDED_TICKS);
+    public int getItemBarStep(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        if (nbt != null && nbt.contains(KEY_REMAINING_TICKS)) {
+            return (int) (nbt.getLong(KEY_REMAINING_TICKS) * 13.0F / Starcaller.STAR_GROUNDED_TICKS);
         }
-        return super.getItemBarStep(itemStack);
+        return super.getItemBarStep(stack);
     }
 
     @Override
-    public int getItemBarColor(ItemStack itemStack) {
-        if (itemStack.hasNbt() && itemStack.getNbt().contains(KEY_STAR_COLOR)) {
-            return itemStack.getNbt().getInt(KEY_STAR_COLOR);
+    public int getItemBarColor(ItemStack stack) {
+        NbtCompound nbt = stack.getNbt();
+        if (nbt != null && nbt.contains(KEY_STAR_INDEX)) {
+            return nbt.getCompound(KEY_STAR_DISPLAY).getInt(KEY_STAR_COLOR);
         }
-        return super.getItemBarColor(itemStack);
+        return super.getItemBarColor(stack);
     }
 
     @Override
-    public void onCraftByPlayer(ItemStack itemStack, World world, PlayerEntity playerEntity) {
-        super.onCraftByPlayer(itemStack, world, playerEntity);
+    public void onCraftByPlayer(ItemStack stack, World world, PlayerEntity playerEntity) {
+        super.onCraftByPlayer(stack, world, playerEntity);
+        NbtCompound nbt = stack.getNbt();
+        if (nbt != null && nbt.contains(KEY_STAR_INDEX) && world instanceof StarcallerWorld scw) {
+            Star star = scw.starcaller$getStars().get(nbt.getInt(KEY_STAR_INDEX));
+            scw.starcaller$colorStar(playerEntity, star, 0xFF000000 | nbt.getCompound(KEY_STAR_DISPLAY).getInt(KEY_STAR_COLOR));
+            nbt.putString(KEY_EDITOR, star.editor);
+            nbt.putInt(KEY_EDITOR_COLOR, star.editorColor);
+        }
     }
 
     @Override
-    public void inventoryTick(ItemStack itemStack, World world, Entity entity, int i, boolean bl) {
-        super.inventoryTick(itemStack, world, entity, i, bl);
-        if (itemStack.hasNbt() && itemStack.getNbt().contains(KEY_STAR_GROUNDED_TICK)) {
-            long groundedTicks = world.getTime() - itemStack.getNbt().getLong(KEY_STAR_GROUNDED_TICK);
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int i, boolean bl) {
+        super.inventoryTick(stack, world, entity, i, bl);
+        NbtCompound nbt = stack.getNbt();
+        if (nbt != null && nbt.contains(KEY_STAR_GROUNDED_TICK)) {
+            long groundedTicks = world.getTime() - nbt.getLong(KEY_STAR_GROUNDED_TICK);
             if (groundedTicks > Starcaller.STAR_GROUNDED_TICKS) {
-                if (entity instanceof PlayerEntity player) {
-                    itemStack.decrement(itemStack.getCount());
-                }
+                stack.decrement(stack.getCount());
                 return;
             }
-            itemStack.getNbt().putLong(KEY_REMAINING_TICKS, Starcaller.STAR_GROUNDED_TICKS - groundedTicks);
+            nbt.putLong(KEY_REMAINING_TICKS, Starcaller.STAR_GROUNDED_TICKS - groundedTicks);
         } else {
-            itemStack.decrement(itemStack.getCount());
+            stack.decrement(stack.getCount());
         }
     }
 }

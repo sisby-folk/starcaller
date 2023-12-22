@@ -9,6 +9,7 @@
   "client": [
     "MixinClientWorld",
     "MixinInGameHud",
-    "MixinWorldRenderer"
+    "MixinWorldRenderer",
+    "MixinItemStack"
   ]
 }

@@ -2,12 +2,14 @@ package folk.sisby.starcaller.client.mixin;
 
 import folk.sisby.starcaller.Star;
 import folk.sisby.starcaller.Starcaller;
-import folk.sisby.starcaller.client.duck.StarcallerClientWorld;
+import folk.sisby.starcaller.client.StarcallerClient;
+import folk.sisby.starcaller.duck.StarcallerWorld;
 import folk.sisby.starcaller.util.StarUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.profiler.Profiler;
@@ -23,7 +25,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @Mixin(ClientWorld.class)
-public class MixinClientWorld implements StarcallerClientWorld {
+public abstract class MixinClientWorld implements StarcallerWorld {
     @Unique private List<Star> starCaller$stars;
 
     @Inject(method = "<init>", at = @At("TAIL"))
@@ -42,5 +44,21 @@ public class MixinClientWorld implements StarcallerClientWorld {
     @Override
     public List<Star> starcaller$getStars() {
         return starCaller$stars;
+    }
+
+    @Override
+    public void starcaller$groundStar(PlayerEntity cause, Star star) {
+        StarcallerClient.groundStar(cause, ((ClientWorld) (Object) this), star);
+    }
+
+
+    @Override
+    public void starcaller$freeStar(PlayerEntity cause, Star star) {
+        StarcallerClient.freeStar(cause, ((ClientWorld) (Object) this), star);
+    }
+
+    @Override
+    public void starcaller$colorStar(PlayerEntity cause, Star star, int color) {
+        StarcallerClient.colorStar(cause, star, color);
     }
 }

@@ -14,7 +14,7 @@ public class Star {
 
     public final Vec3d pos;
     public long groundedTick;
-    public int color;
+    public int color; // With Alpha
     public String editor; // Unused on client
     public int editorColor; // Unused on client
 
