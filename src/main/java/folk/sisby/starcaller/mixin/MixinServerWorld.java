@@ -30,41 +30,26 @@ public abstract class MixinServerWorld implements StarcallerWorld {
     @Override
     public long starcaller$getSeed() {
         ServerWorld self = (ServerWorld) (Object) this;
-        StarState state = self.getPersistentStateManager().get(StarState.getPersistentStateType(), Starcaller.STATE_KEY);
-        return state != null ? state.seed : Starcaller.STAR_SEED;
+        StarState state = self.getPersistentStateManager().get(StarState.getPersistentStateType(self.getSeed()), Starcaller.STATE_KEY);
+        return state != null ? state.seed : (Starcaller.CONFIG.starSeed != -1 ? Starcaller.CONFIG.starSeed : self.getSeed());
     }
 
     @Override
     public int starcaller$getIterations() {
         ServerWorld self = (ServerWorld) (Object) this;
-        StarState state = self.getPersistentStateManager().get(StarState.getPersistentStateType(), Starcaller.STATE_KEY);
-        return state != null ? state.iterations : Starcaller.STAR_ITERATIONS;
+        StarState state = self.getPersistentStateManager().get(StarState.getPersistentStateType(self.getSeed()), Starcaller.STATE_KEY);
+        return state != null ? state.limit : Starcaller.CONFIG.starLimit;
     }
 
     @Override
     public List<Star> starcaller$getStars() {
         ServerWorld self = (ServerWorld) (Object) this;
-        StarState state = self.getPersistentStateManager().get(StarState.getPersistentStateType(), Starcaller.STATE_KEY);
+        StarState state = self.getPersistentStateManager().get(StarState.getPersistentStateType(self.getSeed()), Starcaller.STATE_KEY);
         return state != null ? state.stars : List.of();
     }
 
     @Override
-    public void starcaller$setSeed(long seed) {
-        ServerWorld self = (ServerWorld) (Object) this;
-        StarState state = self.getPersistentStateManager().get(StarState.getPersistentStateType(), Starcaller.STATE_KEY);
-        if (state != null) {
-            state.seed = seed;
-            state.markDirty();
-        }
-    }
-
-    @Override
-    public void starcaller$setIterations(int iterations) {
-        ServerWorld self = (ServerWorld) (Object) this;
-        StarState state = self.getPersistentStateManager().get(StarState.getPersistentStateType(), Starcaller.STATE_KEY);
-        if (state != null) {
-            state.iterations = iterations;
-            state.markDirty();
-        }
+    public void starcaller$setGeneratorValues(long seed, int iterations) {
+        throw new UnsupportedOperationException("Server generator values are set through the config!");
     }
 }

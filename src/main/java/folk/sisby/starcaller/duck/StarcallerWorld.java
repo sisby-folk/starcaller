@@ -10,8 +10,7 @@ public interface StarcallerWorld {
     int starcaller$getIterations();
     List<Star> starcaller$getStars();
 
-    void starcaller$setSeed(long seed);
-    void starcaller$setIterations(int iterations);
+    void starcaller$setGeneratorValues(long seed, int iterations);
 
     void starcaller$groundStar(PlayerEntity cause, Star star);
 

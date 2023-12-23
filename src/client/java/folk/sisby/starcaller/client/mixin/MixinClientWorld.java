@@ -6,34 +6,21 @@ import folk.sisby.starcaller.client.StarcallerClient;
 import folk.sisby.starcaller.duck.StarcallerWorld;
 import folk.sisby.starcaller.util.StarUtil;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.profiler.Profiler;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 @Mixin(ClientWorld.class)
 public abstract class MixinClientWorld implements StarcallerWorld {
-    @Unique private long starcaller$seed = Starcaller.STAR_SEED;
-    @Unique private int starcaller$iterations = Starcaller.STAR_ITERATIONS;
-    @Unique private List<Star> starcaller$stars;
-
-    @Inject(method = "<init>", at = @At("TAIL"))
-    public void generateStars(ClientPlayNetworkHandler clientPlayNetworkHandler, ClientWorld.Properties properties, RegistryKey<World> registryKey, RegistryEntry<World> registryEntry, int i, int j, Supplier<Profiler> supplier, WorldRenderer worldRenderer, boolean bl, long l, CallbackInfo ci) {
-        starcaller$stars = StarUtil.generateStars(starcaller$seed, starcaller$iterations);
-    }
+    @Unique private long starcaller$seed = 10842L;
+    @Unique private int starcaller$iterations = 1500;
+    @Unique private List<Star> starcaller$stars = StarUtil.generateStars(starcaller$seed, starcaller$iterations);
 
     @Inject(method = "method_23787", at = @At("HEAD"), cancellable = true)
     public void fullBrightStarsWithSpear(float f, CallbackInfoReturnable<Float> cir) {
@@ -75,12 +62,10 @@ public abstract class MixinClientWorld implements StarcallerWorld {
     }
 
     @Override
-    public void starcaller$setSeed(long seed) {
+    public void starcaller$setGeneratorValues(long seed, int iterations) {
         this.starcaller$seed = seed;
-    }
-
-    @Override
-    public void starcaller$setIterations(int iterations) {
         this.starcaller$iterations = iterations;
+        this.starcaller$stars = StarUtil.generateStars(starcaller$seed, starcaller$iterations);
+        StarcallerClient.reloadStars((ClientWorld) (Object) this);
     }
 }

@@ -18,8 +18,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -37,11 +39,24 @@ public abstract class MixinWorldRenderer {
     }
 
     @Inject(method = "renderStars(Lnet/minecraft/client/render/BufferBuilder;)Lnet/minecraft/client/render/BufferBuilder$BuiltBuffer;", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/random/Random;nextDouble()D"), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void setHasDrawn(BufferBuilder bufferBuilder, CallbackInfoReturnable<BufferBuilder.BuiltBuffer> cir, Random random, int i, double d, double e, double f, double g, double h, double j, double k, double l, double m, double n, double o, double p, double q, double r) {
-        if (Starcaller.DEBUG_SKY) {
-            Starcaller.LOGGER.info("Gen Star {} {} {}", j, k, l);
-        }
+    public void countSuccessfulStars(BufferBuilder bufferBuilder, CallbackInfoReturnable<BufferBuilder.BuiltBuffer> cir, Random random, int i, double d, double e, double f, double g, double h, double j, double k, double l, double m, double n, double o, double p, double q, double r) {
         starIndex++;
+    }
+
+    @ModifyArg(method = "renderStars(Lnet/minecraft/client/render/BufferBuilder;)Lnet/minecraft/client/render/BufferBuilder$BuiltBuffer;", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/random/Random;create(J)Lnet/minecraft/util/math/random/Random;"))
+    public long useCustomSeed(long original) {
+        if (world instanceof StarcallerWorld scw) {
+            return scw.starcaller$getSeed();
+        }
+        return original;
+    }
+
+    @ModifyConstant(method = "renderStars(Lnet/minecraft/client/render/BufferBuilder;)Lnet/minecraft/client/render/BufferBuilder$BuiltBuffer;", constant = @Constant(intValue = 1500))
+    public int useCustomLimit(int constant) {
+        if (world instanceof StarcallerWorld scw) {
+            return scw.starcaller$getIterations();
+        }
+        return constant;
     }
 
     @ModifyReceiver(method = "renderStars(Lnet/minecraft/client/render/BufferBuilder;)Lnet/minecraft/client/render/BufferBuilder$BuiltBuffer;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/VertexConsumer;next()V"))
@@ -75,61 +90,5 @@ public abstract class MixinWorldRenderer {
     @ModifyArg(method = "renderSky(Lnet/minecraft/client/util/math/MatrixStack;Lorg/joml/Matrix4f;FLnet/minecraft/client/render/Camera;ZLjava/lang/Runnable;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gl/VertexBuffer;draw(Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/client/gl/ShaderProgram;)V", ordinal = 1), index = 2)
     public ShaderProgram useColorProgram(ShaderProgram shaderProgram) {
         return GameRenderer.getPositionColorProgram();
-    }
-
-    @Inject(method = "renderStars(Lnet/minecraft/client/render/BufferBuilder;)Lnet/minecraft/client/render/BufferBuilder$BuiltBuffer;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/BufferBuilder;end()Lnet/minecraft/client/render/BufferBuilder$BuiltBuffer;"))
-    public void renderDebugStars(BufferBuilder bufferBuilder, CallbackInfoReturnable<BufferBuilder.BuiltBuffer> cir) {
-        if (Starcaller.DEBUG_SKY) {
-            // D, E, F -> Z, Y, -X
-            // X, Y, Z -> -F, E, D
-
-            // +Z
-            bufferBuilder.vertex(100.0F, 0 - 2, 0 - 2).next();
-            bufferBuilder.vertex(100.0F, 0 - 2, 0 + 2).next();
-            bufferBuilder.vertex(100.0F, 0 + 2, 0 + 2).next();
-            bufferBuilder.vertex(100.0F, 0 + 2, 0 - 2).next();
-
-            // -Z
-            bufferBuilder.vertex(-100.0F, 0 - 2, 0).next();
-            bufferBuilder.vertex(-100.0F, 0, 0 - 2).next();
-            bufferBuilder.vertex(-100.0F, 0 + 2, 0).next();
-            bufferBuilder.vertex(-100.0F, 0, 0 + 2).next();
-
-            // Y
-            bufferBuilder.vertex(0 - 8, 100F, 0 - 8).next();
-            bufferBuilder.vertex(0 + 8, 100F, 0 - 8).next();
-            bufferBuilder.vertex(0 + 8, 100F, 0 + 8).next();
-            bufferBuilder.vertex(0 - 8, 100F, 0 + 8).next();
-
-            // -Y
-            bufferBuilder.vertex(0 - 8, -100F, 0).next();
-            bufferBuilder.vertex(0, -100F, 0 + 8).next();
-            bufferBuilder.vertex(0 + 8, -100F, 0).next();
-            bufferBuilder.vertex(0, -100F, 0 - 8).next();
-
-            // X
-            bufferBuilder.vertex(0 - 2, 0 - 2, -100.0F).next();
-            bufferBuilder.vertex(0 - 2, 0 + 2, -100.0F).next();
-            bufferBuilder.vertex(0 + 2, 0 + 2, -100.0F).next();
-            bufferBuilder.vertex(0 + 2, 0 - 2, -100.0F).next();
-
-            // -X
-            bufferBuilder.vertex(0 - 2, 0, 100.0F).next();
-            bufferBuilder.vertex(0, 0 - 2, 100.0F).next();
-            bufferBuilder.vertex(0 + 2, 0, 100.0F).next();
-            bufferBuilder.vertex(0, 0 + 2, 100.0F).next();
-
-            // +ZX
-            bufferBuilder.vertex(70.0F, 0 - 2, -70.0F - 2).next();
-            bufferBuilder.vertex(70.0F, 0 - 2, -70.0F + 2).next();
-            bufferBuilder.vertex(70.0F, 0 + 2, -70.0F + 2).next();
-            bufferBuilder.vertex(70.0F, 0 + 2, -70.0F - 2).next();
-
-            // -ZX
-            bufferBuilder.vertex(-70.0F, 0 - 2, 70.0F).next();
-            bufferBuilder.vertex(-70.0F, 0, 70.0F - 2).next();
-            bufferBuilder.vertex(-70.0F, 0 + 2, 70.0F).next();
-            bufferBuilder.vertex(-70.0F, 0, 70.0F + 2).next();
-        }
     }
 }

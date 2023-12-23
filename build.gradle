@@ -29,6 +29,7 @@ dependencies {
 	mappings libs.yarn
 	modImplementation libs.fl
 	modImplementation libs.fapi
+	modImplementation libs.kaleidoConfig
 }
 
 processResources {
