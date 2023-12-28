@@ -24,4 +24,5 @@ This mod is oriented towards being a toy rather than for survival, but for compl
 
 All mods are built on the work of many others. Please support the community!
 
-<a href="https://modfest.net/1.20"><img alt="modfest 1.20 banner" width="600" src="https://raw.githubusercontent.com/ModFest/art/main/4096w/ModFest%201.20%20Poster.png"/></a>
+[<img src="https://raw.githubusercontent.com/ModFest/art/3bf66556e674d670e30f647d6a48c4e1798c21d4/badge/128h/ModFest%201.20%20Badge.png" width="256" alt="ModFest 1.20">](https://modfest.net/1.20)
+
