@@ -38,7 +38,14 @@
 			{
 				"id": "fabric-api",
 				"versions": ">=${fapi}"
+			},
+			{
+				"id": "lib39-sandman",
+				"versions": ">=${lib39}"
 			}
+		],
+		"jars": [
+			"META-INF/jars/kaleido-config-${kaleidoConfig}.jar"
 		]
 	},
 	"mixin": "starcaller.mixins.json",

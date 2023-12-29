@@ -1,5 +1,6 @@
 package folk.sisby.starcaller.item;
 
+import com.unascribed.lib39.sandman.api.TicksAlwaysItem;
 import folk.sisby.starcaller.Star;
 import folk.sisby.starcaller.Starcaller;
 import folk.sisby.starcaller.duck.StarcallerWorld;
@@ -13,12 +14,13 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class StardustItem extends Item implements DyeableItem {
+public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
     public static final String KEY_STAR_INDEX = "star";
     public static final String KEY_STAR_GROUNDED_TICK = "groundedTick";
     public static final String KEY_STAR_DISPLAY = "display";
@@ -105,9 +107,7 @@ public class StardustItem extends Item implements DyeableItem {
         }
     }
 
-    @Override
-    public void inventoryTick(ItemStack stack, World world, Entity entity, int i, boolean bl) {
-        super.inventoryTick(stack, world, entity, i, bl);
+    private void tick(ItemStack stack, World world) {
         NbtCompound nbt = stack.getNbt();
         if (nbt != null && nbt.contains(KEY_STAR_GROUNDED_TICK)) {
             long groundedTicks = world.getTime() - nbt.getLong(KEY_STAR_GROUNDED_TICK);
@@ -119,5 +119,16 @@ public class StardustItem extends Item implements DyeableItem {
         } else {
             stack.decrement(stack.getCount());
         }
+    }
+
+    @Override
+    public void blockInventoryTick(ItemStack stack, World world, BlockPos pos, int slot) {
+        tick(stack, world);
+    }
+
+    @Override
+    public void entityInventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        TicksAlwaysItem.super.entityInventoryTick(stack, world, entity, slot, selected);
+        tick(stack, world);
     }
 }

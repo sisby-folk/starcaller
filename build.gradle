@@ -26,19 +26,25 @@ repositories {
 
 dependencies {
 	minecraft libs.mc
-	mappings libs.yarn
+	mappings variantOf(libs.yarn) { classifier "v2" }
 	modImplementation libs.fl
 	modImplementation libs.fapi
 	modImplementation libs.kaleidoConfig
+	modImplementation libs.lib39core
+	modImplementation libs.lib39sandman
 	include libs.kaleidoConfig
+	include libs.lib39core
+	include libs.lib39sandman
 }
 
 processResources {
 	final Map<String, String> map = [
-			"version"      : version.toString(),
-			"mc"           : libs.versions.mc.get(),
-			"fl"           : libs.versions.fl.get(),
-			"fapi"         : libs.versions.fapi.get(),
+		"version"      : version.toString(),
+		"mc"           : libs.versions.mc.get(),
+		"fl"           : libs.versions.fl.get(),
+		"kaleidoConfig": libs.versions.kaleidoConfig.get(),
+		"fapi"         : libs.versions.fapi.get(),
+		"lib39"        : libs.versions.lib39.get(),
 	]
 
 	inputs.properties(map)

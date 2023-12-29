@@ -33,6 +33,7 @@
   "depends": {
     "fabricloader": ">=${fl}",
     "fabric-api": ">=${fapi}",
-    "minecraft": ">=${mc}"
+    "minecraft": ">=${mc}",
+    "lib39-sandman": ">=${lib39}"
   }
 }
