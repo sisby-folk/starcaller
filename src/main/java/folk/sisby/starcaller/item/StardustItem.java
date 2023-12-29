@@ -122,13 +122,12 @@ public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
     }
 
     @Override
-    public void blockInventoryTick(ItemStack stack, World world, BlockPos pos, int slot) {
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
         tick(stack, world);
     }
 
     @Override
-    public void entityInventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        TicksAlwaysItem.super.entityInventoryTick(stack, world, entity, slot, selected);
+    public void blockInventoryTick(ItemStack stack, World world, BlockPos pos, int slot) {
         tick(stack, world);
     }
 }
