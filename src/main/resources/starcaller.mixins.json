@@ -8,5 +8,11 @@
   },
   "mixins": [
     "MixinServerWorld"
+  ],
+  "client": [
+    "client.MixinClientWorld",
+    "client.MixinInGameHud",
+    "client.MixinWorldRenderer",
+    "client.MixinItemStack"
   ]
 }

@@ -1,4 +1,4 @@
-package folk.sisby.starcaller.client.mixin;
+package folk.sisby.starcaller.mixin.client;
 
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import folk.sisby.starcaller.Star;

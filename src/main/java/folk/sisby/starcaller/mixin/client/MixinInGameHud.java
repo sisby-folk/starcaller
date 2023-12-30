@@ -1,4 +1,4 @@
-package folk.sisby.starcaller.client.mixin;
+package folk.sisby.starcaller.mixin.client;
 
 import folk.sisby.starcaller.Starcaller;
 import folk.sisby.starcaller.client.StarcallerClient;
