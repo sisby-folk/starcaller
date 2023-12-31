@@ -3,6 +3,7 @@ package folk.sisby.starcaller.client;
 import folk.sisby.starcaller.Star;
 import folk.sisby.starcaller.Starcaller;
 import folk.sisby.starcaller.duck.StarcallerWorld;
+import folk.sisby.starcaller.item.StardustItem;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
@@ -29,9 +30,13 @@ public class StarcallerClient implements ClientModInitializer {
         ModelPredicateProviderRegistry.register(Starcaller.SPEAR, new Identifier("throwing"),
                 (stack, world, entity, i) -> entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F
         );
+        ModelPredicateProviderRegistry.register(Starcaller.STARDUST, new Identifier("star_expired"),
+                (stack, world, entity, i) -> world != null && world.getTime() - stack.getOrCreateNbt().getLong(StardustItem.KEY_STAR_GROUNDED_TICK) > Starcaller.STAR_GROUNDED_TICKS ? 1.0F : 0.0F
+        );
         ColorProviderRegistry.ITEM.register((stack, index) -> (index > 0) ? (0x888888 + random.nextInt(127)) : -1, Starcaller.SPEAR);
         ClientTickEvents.END_WORLD_TICK.register((StarcallerClient::clientTick));
         StarcallerClientNetworking.init();
+        Starcaller.TICKER = new StardustTickerImpl();
         LOGGER.info("[Starcaller Client] Initialized.");
     }
 

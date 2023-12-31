@@ -2,5 +2,13 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "starcaller:item/stardust"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "star_expired": 1
+      },
+      "model": "minecraft:item/air"
+    }
+  ]
 }

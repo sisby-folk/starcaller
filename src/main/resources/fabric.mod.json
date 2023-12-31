@@ -23,11 +23,7 @@
     ]
   },
   "mixins": [
-    "starcaller.mixins.json",
-    {
-      "config": "starcaller.client.mixins.json",
-      "environment": "client"
-    }
+    "starcaller.mixins.json"
   ],
   "accessWidener": "starcaller.accesswidener",
   "depends": {

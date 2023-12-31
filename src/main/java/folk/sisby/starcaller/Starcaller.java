@@ -21,13 +21,15 @@ import org.slf4j.LoggerFactory;
 public class Starcaller implements ModInitializer {
     public static final String ID = "starcaller";
     public static final Logger LOGGER = LoggerFactory.getLogger(ID);
-    public static final int STAR_GROUNDED_TICKS = 1200;
+    public static final int STAR_GROUNDED_TICKS = 400;
     public static final String STATE_KEY = "starcaller_stars";
 
     public static final StardustItem STARDUST = Registry.register(Registries.ITEM, id("stardust"), new StardustItem(new FabricItemSettings().maxCount(1)));
     public static final SpearItem SPEAR = Registry.register(Registries.ITEM, id("spear"), new SpearItem(new FabricItemSettings().maxCount(1)));
 
     public static final StarcallerConfig CONFIG = StarcallerConfig.createToml(FabricLoader.getInstance().getConfigDir(), "", ID, StarcallerConfig.class);
+
+    public static StardustTicker TICKER = new StardustTicker() {};
 
     @Override
     public void onInitialize() {
