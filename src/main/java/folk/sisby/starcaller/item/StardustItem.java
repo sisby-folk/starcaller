@@ -76,7 +76,7 @@ public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
     }
 
     public static Text getCountdown(long remainingTicks) {
-        return Text.translatable("item.starcaller.stardust.countdown", Text.literal(String.valueOf((remainingTicks / 20) + 1)).formatted(Formatting.GOLD)).formatted(Formatting.DARK_GRAY);
+        return Text.translatable("item.starcaller.stardust.countdown", Text.literal(String.valueOf((int) Math.ceil(remainingTicks / 20.0F))).formatted(Formatting.GOLD)).formatted(Formatting.DARK_GRAY);
     }
 
     @Override
@@ -144,9 +144,9 @@ public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
     public void onCraftByPlayer(ItemStack stack, World world, PlayerEntity playerEntity) {
         super.onCraftByPlayer(stack, world, playerEntity);
         NbtCompound nbt = stack.getNbt();
-        tick(stack, world);
         Long remainingTicks = getRemainingTicks(stack, world);
-        if (!stack.isEmpty() && nbt != null && nbt.contains(KEY_STAR_INDEX) && world instanceof StarcallerWorld scw && remainingTicks != null && remainingTicks > 0 && Objects.equals(remainingTicks, StardustItem.getWorldRemainingTicks(stack, world))) {
+        if (nbt != null && nbt.contains(KEY_STAR_INDEX) && world instanceof StarcallerWorld scw && remainingTicks != null && remainingTicks > 0) {
+            if (!world.isClient && !Objects.equals(remainingTicks, StardustItem.getWorldRemainingTicks(stack, world))) return;
             int index = nbt.getInt(KEY_STAR_INDEX);
             if (scw.starcaller$getStars().size() > index) {
                 Star star = scw.starcaller$getStars().get(index);

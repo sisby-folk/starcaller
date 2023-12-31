@@ -23,7 +23,7 @@ public class MixinArmorDyeRecipe {
                 if (!stack.isEmpty()) {
                     if (stack.getItem() instanceof StardustItem) {
                         Long remainingTicks = StardustItem.getRemainingTicks(stack, world);
-                        return remainingTicks != null && remainingTicks > 0 && Objects.equals(remainingTicks, StardustItem.getWorldRemainingTicks(stack, world));
+                        return remainingTicks != null && remainingTicks > 0 && (world.isClient || Objects.equals(remainingTicks, StardustItem.getWorldRemainingTicks(stack, world)));
                     }
                 }
             }
