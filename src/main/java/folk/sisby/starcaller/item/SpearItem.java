@@ -53,7 +53,7 @@ public class SpearItem extends Item {
                     player.sendMessage(Text.translatable("messages.starcaller.star.info", Text.translatable("star.starcaller.overworld.%s".formatted(i)).setStyle(Style.EMPTY.withFormatting(Formatting.ITALIC).withColor(closestStar.color))), true);
                     return;
                 }
-                player.sendMessage(Text.empty(), true);
+                if (!player.getMainHandStack().isOf(Starcaller.STARDUST)) player.sendMessage(Text.empty(), true);
             }
         }
     }

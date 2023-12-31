@@ -7,12 +7,14 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "MixinArmorDyeRecipe",
+    "MixinCraftingScreenHandler",
     "MixinServerWorld"
   ],
   "client": [
     "client.MixinClientWorld",
     "client.MixinInGameHud",
-    "client.MixinWorldRenderer",
-    "client.MixinItemStack"
+    "client.MixinItemStack",
+    "client.MixinWorldRenderer"
   ]
 }

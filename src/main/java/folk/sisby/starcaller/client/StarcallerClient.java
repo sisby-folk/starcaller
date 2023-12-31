@@ -34,6 +34,7 @@ public class StarcallerClient implements ClientModInitializer {
                 (stack, world, entity, i) -> world != null && world.getTime() - stack.getOrCreateNbt().getLong(StardustItem.KEY_STAR_GROUNDED_TICK) > Starcaller.STAR_GROUNDED_TICKS ? 1.0F : 0.0F
         );
         ColorProviderRegistry.ITEM.register((stack, index) -> (index > 0) ? (0x888888 + random.nextInt(127)) : -1, Starcaller.SPEAR);
+        ColorProviderRegistry.ITEM.register((stack, index) -> stack.getItemBarColor(), Starcaller.STARDUST);
         ClientTickEvents.END_WORLD_TICK.register((StarcallerClient::clientTick));
         StarcallerClientNetworking.init();
         Starcaller.TICKER = new StardustTickerImpl();
