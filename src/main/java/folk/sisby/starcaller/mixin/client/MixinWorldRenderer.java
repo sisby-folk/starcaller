@@ -66,7 +66,7 @@ public abstract class MixinWorldRenderer {
             List<Star> stars = scw.starcaller$getStars();
             if (starIndex < stars.size()) {
                 Star star = stars.get(starIndex);
-                boolean grounded = star.groundedTick != 0 && world.getTime() - star.groundedTick < Starcaller.STAR_GROUNDED_TICKS;
+                boolean grounded = star.groundedTick != 0 && world.getTime() - star.groundedTick < Starcaller.CONFIG.starGroundedTicks;
                 if (grounded) {
                     color = 0x00FFFF00;
                 } else {

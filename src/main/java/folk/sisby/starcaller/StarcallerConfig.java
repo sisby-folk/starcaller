@@ -16,4 +16,7 @@ public class StarcallerConfig extends WrappedConfig {
     @Comment("Star names are provided via indexed translations e.g. star.starcaller.overworld.11")
     @Comment("Starcaller provides \"proper names\" up to 780 stars, and fake bayer designations up to 7468 stars.")
     public final Integer starLimit = 780;
+
+    @Comment("The amount of ticks a star can stay grounded as stardust.")
+    public final Integer starGroundedTicks = 600;
 }

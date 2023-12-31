@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 public class Starcaller implements ModInitializer {
     public static final String ID = "starcaller";
     public static final Logger LOGGER = LoggerFactory.getLogger(ID);
-    public static final int STAR_GROUNDED_TICKS = 1200;
     public static final String STATE_KEY = "starcaller_stars";
 
     public static final StardustItem STARDUST = Registry.register(Registries.ITEM, id("stardust"), new StardustItem(new FabricItemSettings().maxCount(1)));
@@ -40,7 +39,7 @@ public class Starcaller implements ModInitializer {
         }));
         ServerTickEvents.END_WORLD_TICK.register((world -> {
             for (Star star : ((StarcallerWorld) world).starcaller$getStars()) {
-                if (world.getTime() > star.groundedTick + Starcaller.STAR_GROUNDED_TICKS) {
+                if (world.getTime() > star.groundedTick + Starcaller.CONFIG.starGroundedTicks) {
                     star.groundedTick = -1;
                 }
             }

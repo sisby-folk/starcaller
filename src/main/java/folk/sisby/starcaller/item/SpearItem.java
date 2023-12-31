@@ -47,7 +47,7 @@ public class SpearItem extends Item {
             if (player.raycast(12 * 16, 1.0F, false).getType() == HitResult.Type.MISS) {
                 List<Star> stars = scw.starcaller$getStars();
                 Vec3d cursorCoordinates = StarUtil.correctForSkyAngle(StarUtil.getStarCursor(player.getHeadYaw(), player.getPitch()), world.getSkyAngle(1.0F));
-                Star closestStar = stars.stream().filter(s -> s.groundedTick == -1 || s.groundedTick + Starcaller.STAR_GROUNDED_TICKS < world.getTime()).filter(s -> s.groundedTick == -1 || s.groundedTick + Starcaller.STAR_GROUNDED_TICKS < world.getTime()).min(Comparator.comparingDouble(s -> s.pos.squaredDistanceTo(cursorCoordinates))).get();
+                Star closestStar = stars.stream().filter(s -> s.groundedTick == -1 || s.groundedTick + Starcaller.CONFIG.starGroundedTicks < world.getTime()).filter(s -> s.groundedTick == -1 || s.groundedTick + Starcaller.CONFIG.starGroundedTicks < world.getTime()).min(Comparator.comparingDouble(s -> s.pos.squaredDistanceTo(cursorCoordinates))).get();
                 if (cursorCoordinates.isInRange(closestStar.pos, 4)) {
                     int i = stars.indexOf(closestStar);
                     player.sendMessage(Text.translatable("messages.starcaller.star.info", Text.translatable("star.starcaller.overworld.%s".formatted(i)).setStyle(Style.EMPTY.withFormatting(Formatting.ITALIC).withColor(closestStar.color))), true);

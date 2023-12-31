@@ -21,8 +21,8 @@ public class StardustTickerImpl implements StardustTicker {
     public int getItemBarStep(ItemStack stack) {
         NbtCompound nbt = stack.getNbt();
         if (nbt != null && nbt.contains(KEY_STAR_GROUNDED_TICK) && MinecraftClient.getInstance().world != null) {
-            long remainingTicks = Starcaller.STAR_GROUNDED_TICKS + nbt.getLong(KEY_STAR_GROUNDED_TICK) - MinecraftClient.getInstance().world.getTime();
-            return (int) Math.clamp(0, 13.0F, (remainingTicks * 13.0F / Starcaller.STAR_GROUNDED_TICKS));
+            long remainingTicks = Starcaller.CONFIG.starGroundedTicks + nbt.getLong(KEY_STAR_GROUNDED_TICK) - MinecraftClient.getInstance().world.getTime();
+            return (int) Math.clamp(0, 13.0F, (remainingTicks * 13.0F / Starcaller.CONFIG.starGroundedTicks));
 
         }
         return StardustTicker.super.getItemBarStep(stack);

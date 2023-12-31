@@ -67,12 +67,12 @@ public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
 
     public static Long getRemainingTicks(ItemStack stack, World world) {
         NbtCompound nbt = stack.getNbt();
-        return world != null && nbt != null && nbt.contains(KEY_STAR_GROUNDED_TICK) ? Starcaller.STAR_GROUNDED_TICKS + nbt.getLong(KEY_STAR_GROUNDED_TICK) - world.getTime() : null;
+        return world != null && nbt != null && nbt.contains(KEY_STAR_GROUNDED_TICK) ? Starcaller.CONFIG.starGroundedTicks + nbt.getLong(KEY_STAR_GROUNDED_TICK) - world.getTime() : null;
     }
 
     public static Long getWorldRemainingTicks(ItemStack stack, World world) {
         NbtCompound nbt = stack.getNbt();
-        return world != null && nbt != null && nbt.contains(KEY_STAR_INDEX) && world instanceof StarcallerWorld sw && sw.starcaller$getStars().size() > nbt.getInt(KEY_STAR_INDEX) ? Starcaller.STAR_GROUNDED_TICKS + sw.starcaller$getStars().get(nbt.getInt(KEY_STAR_INDEX)).groundedTick - world.getTime() : null;
+        return world != null && nbt != null && nbt.contains(KEY_STAR_INDEX) && world instanceof StarcallerWorld sw && sw.starcaller$getStars().size() > nbt.getInt(KEY_STAR_INDEX) ? Starcaller.CONFIG.starGroundedTicks + sw.starcaller$getStars().get(nbt.getInt(KEY_STAR_INDEX)).groundedTick - world.getTime() : null;
     }
 
     public static Text getCountdown(long remainingTicks) {
