@@ -117,12 +117,16 @@ public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
         return super.getItemBarColor(stack);
     }
 
-    private void forceDissipate(ItemStack stack, World world, Vec3d pos) {
+    private void dissipateEffect(ItemStack stack, World world, Vec3d pos, int count) {
         if (world instanceof ServerWorld sw) {
-            sw.playSound(null, pos.x, pos.y, pos.z, SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 1.0F, 2.0F);
+            sw.playSound(null, pos.x, pos.y, pos.z, SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 3.0F, 2.0F);
             sw.playSound(null, pos.x, pos.y, pos.z, SoundEvents.ITEM_BRUSH_BRUSHING_GENERIC, SoundCategory.PLAYERS, 0.8F, 2.0F);
-            sw.spawnParticles(new DustParticleEffect(ColorUtil.colorToComponents(getItemBarColor(stack)), 0.6f), pos.x, pos.y, pos.z, 40, 0.5f, 0.125f, 0.5f, 0); // shoutouts to Yttr, obviously
+            sw.spawnParticles(new DustParticleEffect(ColorUtil.colorToComponents(getItemBarColor(stack)), 0.6f), pos.x, pos.y, pos.z, count, 0.5f, 0.125f, 0.5f, 0); // shoutouts to Yttr, obviously
         }
+    }
+
+    private void forceDissipate(ItemStack stack, World world, Vec3d pos) {
+        dissipateEffect(stack, world, pos, 40);
         NbtCompound nbt = stack.getNbt();
         if (world instanceof StarcallerWorld scw && nbt != null && nbt.contains(StardustItem.KEY_STAR_INDEX)) {
             List<Star> stars = scw.starcaller$getStars();
@@ -133,9 +137,10 @@ public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
         }
     }
 
-    private void tick(ItemStack stack, World world) {
+    private void tick(ItemStack stack, World world, Vec3d pos) {
         Long remainingTicks = getRemainingTicks(stack, world);
         if (remainingTicks == null || remainingTicks <= 0) {
+            dissipateEffect(stack, world, pos, 20);
             stack.decrement(stack.getCount());
         }
     }
@@ -157,19 +162,19 @@ public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
 
     @Override
     public boolean onStackClicked(ItemStack stack, Slot slot, ClickType clickType, PlayerEntity player) {
-        tick(stack, player.getWorld());
+        tick(stack, player.getWorld(), player.getEyePos());
         return super.onStackClicked(stack, slot, clickType, player);
     }
 
     @Override
     public boolean onClicked(ItemStack stack, ItemStack otherStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorStackReference) {
-        tick(stack, player.getWorld());
+        tick(stack, player.getWorld(), player.getEyePos());
         return super.onClicked(stack, otherStack, slot, clickType, player, cursorStackReference);
     }
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-        tick(stack, world);
+        tick(stack, world, entity.getEyePos());
         Long remainingTicks = getRemainingTicks(stack, world);
         if (world.isClient && selected && entity instanceof PlayerEntity player) {
             player.sendMessage(Text.translatable("item.starcaller.stardust.status", getCountdown(remainingTicks)).formatted(Formatting.AQUA), true);
@@ -178,7 +183,7 @@ public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
 
     @Override
     public void blockInventoryTick(ItemStack stack, World world, BlockPos pos, int slot) {
-        tick(stack, world);
+        tick(stack, world, pos.toCenterPos());
     }
 
     @Override
