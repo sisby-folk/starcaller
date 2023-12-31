@@ -119,7 +119,7 @@ public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
 
     private void forceDissipate(ItemStack stack, World world, Vec3d pos) {
         if (world instanceof ServerWorld sw) {
-            sw.playSound(null, pos.x, pos.y, pos.z, SoundEvents.BLOCK_BEACON_DEACTIVATE, SoundCategory.PLAYERS, 1.0F, 2.0F);
+            sw.playSound(null, pos.x, pos.y, pos.z, SoundEvents.BLOCK_AMETHYST_BLOCK_CHIME, SoundCategory.PLAYERS, 1.0F, 2.0F);
             sw.playSound(null, pos.x, pos.y, pos.z, SoundEvents.ITEM_BRUSH_BRUSHING_GENERIC, SoundCategory.PLAYERS, 0.8F, 2.0F);
             sw.spawnParticles(new DustParticleEffect(ColorUtil.colorToComponents(getItemBarColor(stack)), 0.6f), pos.x, pos.y, pos.z, 40, 0.5f, 0.125f, 0.5f, 0); // shoutouts to Yttr, obviously
         }
