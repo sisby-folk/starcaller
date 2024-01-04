@@ -13,6 +13,7 @@ _Starcaller_ allows players to:
  - Dye stardust any color, affecting the star once it reappears after 60 seconds.
  - Release stars back into the sky early by dropping their dust.
  - See who last recolored a star by inspecting its dust.
+ - Configure stars to use a different seed, or increase the limit up to 7468 stars (more with resource packs).
 
 ![star dyeing](https://cdn.modrinth.com/data/z7IRTW7F/images/6860bcb970b2dd1ba7aa4afb1f72e05e81a21081.gif)
 
