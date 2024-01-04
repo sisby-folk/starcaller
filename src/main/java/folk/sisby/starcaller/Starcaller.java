@@ -7,8 +7,11 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemGroups;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.world.ServerWorld;
@@ -43,6 +46,9 @@ public class Starcaller implements ModInitializer {
                     star.groundedTick = -1;
                 }
             }
+        }));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register((entries -> {
+            entries.addBefore(Items.FLINT_AND_STEEL, SPEAR);
         }));
         StarcallerNetworking.init();
         LOGGER.info("[Starcaller] Initialized.");

@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class StarcallerClient implements ClientModInitializer {
@@ -31,7 +32,7 @@ public class StarcallerClient implements ClientModInitializer {
                 (stack, world, entity, i) -> entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F
         );
         ModelPredicateProviderRegistry.register(Starcaller.STARDUST, new Identifier("star_expired"),
-                (stack, world, entity, i) -> world != null && world.getTime() - stack.getOrCreateNbt().getLong(StardustItem.KEY_STAR_GROUNDED_TICK) > Starcaller.CONFIG.starGroundedTicks ? 1.0F : 0.0F
+                (stack, world, entity, i) -> Objects.requireNonNullElse(StardustItem.getRemainingTicks(stack, world), 1L) <= 0 ? 1.0F : 0.0F
         );
         ColorProviderRegistry.ITEM.register((stack, index) -> (index > 0) ? (0x888888 + random.nextInt(127)) : -1, Starcaller.SPEAR);
         ColorProviderRegistry.ITEM.register((stack, index) -> stack.getItemBarColor(), Starcaller.STARDUST);
