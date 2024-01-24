@@ -45,7 +45,9 @@
 			}
 		],
 		"jars": [
-			"META-INF/jars/kaleido-config-${kaleidoConfig}.jar"
+			"META-INF/jars/kaleido-config-${kaleidoConfig}.jar",
+			"META-INF/jars/lib39-core-${lib39}.jar",
+			"META-INF/jars/lib39-sandman-${lib39}.jar"
 		]
 	},
 	"mixin": "starcaller.mixins.json",
