@@ -78,7 +78,7 @@ publishing {
 	}
 }
 
-if (System.getenv("MODRINTH_TOKEN")) {
+if (System.getenv("MODRINTH_TOKEN") && file("CHANGELOG.md").exists() ) {
 	apply plugin: "com.modrinth.minotaur"
 	modrinth {
 		token = System.getenv("MODRINTH_TOKEN")
@@ -92,12 +92,12 @@ if (System.getenv("MODRINTH_TOKEN")) {
 		detectLoaders = false
 		dependencies {
 		}
-		changelog = "Changelog: https://github.com/sisby-folk/starcaller/releases/tag/v" + baseVersion
+		changelog = rootProject.file("CHANGELOG.md").text + "\n\nChangelog: https://github.com/sisby-folk/$project.name/releases/tag/v$baseVersion"
 		syncBodyFrom = rootProject.file("README.md").text
 	}
 }
 
-if (System.getenv("GITHUB_TOKEN")) {
+if (System.getenv("GITHUB_TOKEN") && file("CHANGELOG.md").exists()) {
 	apply plugin: "com.github.breadmoirai.github-release"
 	githubRelease {
 		token System.getenv("GITHUB_TOKEN")
@@ -111,6 +111,7 @@ if (System.getenv("GITHUB_TOKEN")) {
 		releaseAssets remapJar.archiveFile
 		allowUploadToExisting true
 		generateReleaseNotes true
+		body rootProject.file("CHANGELOG.md").text
 	}
 	tasks.githubRelease.dependsOn remapJar
 }

@@ -27,3 +27,6 @@ bin/
 # fabric
 
 run/
+
+# Changelog
+/CHANGELOG.md
