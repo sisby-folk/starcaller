@@ -23,7 +23,7 @@ This mod is oriented towards being a toy rather than for survival, but for compl
 
 ### Mofest 1.20
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/LzQZTMVh17Y?si=yvNtHBbykBOGHC0i" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Modfest 1.20 Tour](https://img.youtube.com/vi/LzQZTMVh17Y/0.jpg)](https://www.youtube.com/watch?v=LzQZTMVh17Y)
 
 ### Afterword
 
