@@ -21,6 +21,10 @@ This mod is oriented towards being a toy rather than for survival, but for compl
 
 ![spear recipe](https://cdn.modrinth.com/data/z7IRTW7F/images/12587366dbec240bd55357840bf9164f18d08b7d.png)
 
+### Mofest 1.20
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/LzQZTMVh17Y?si=yvNtHBbykBOGHC0i" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ### Afterword
 
 All mods are built on the work of many others. Please support the community!
