@@ -22,7 +22,7 @@ import java.util.Random;
 
 public class StarcallerClient implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(Starcaller.ID + "_client");
-    public static final Identifier CROSSHAIR_TEXTURE = Starcaller.id("hud/crosshair");
+    public static final Identifier CROSSHAIR_TEXTURE = Starcaller.id("textures/gui/sprites/hud/crosshair.png");
 
     public static Random random = new Random();
 

@@ -30,21 +30,21 @@ public abstract class MixinServerWorld implements StarcallerWorld {
     @Override
     public long starcaller$getSeed() {
         ServerWorld self = (ServerWorld) (Object) this;
-        StarState state = self.getPersistentStateManager().get(StarState.getPersistentStateType(self.getSeed()), Starcaller.STATE_KEY);
+        StarState state = self.getPersistentStateManager().get(nbt -> StarState.fromNbt(nbt, self.getSeed()), Starcaller.STATE_KEY);
         return state != null ? state.seed : (Starcaller.CONFIG.starSeed != -1 ? Starcaller.CONFIG.starSeed : self.getSeed());
     }
 
     @Override
     public int starcaller$getIterations() {
         ServerWorld self = (ServerWorld) (Object) this;
-        StarState state = self.getPersistentStateManager().get(StarState.getPersistentStateType(self.getSeed()), Starcaller.STATE_KEY);
+        StarState state = self.getPersistentStateManager().get(nbt -> StarState.fromNbt(nbt, self.getSeed()), Starcaller.STATE_KEY);
         return state != null ? state.limit : Starcaller.CONFIG.starLimit;
     }
 
     @Override
     public List<Star> starcaller$getStars() {
         ServerWorld self = (ServerWorld) (Object) this;
-        StarState state = self.getPersistentStateManager().get(StarState.getPersistentStateType(self.getSeed()), Starcaller.STATE_KEY);
+        StarState state = self.getPersistentStateManager().get(nbt -> StarState.fromNbt(nbt, self.getSeed()), Starcaller.STATE_KEY);
         return state != null ? state.stars : List.of();
     }
 

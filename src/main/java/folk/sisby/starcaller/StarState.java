@@ -18,10 +18,6 @@ public class StarState extends PersistentState {
     public int iterations; // Not persistent, just convenient for the client.
     public List<Star> stars;
 
-    public static PersistentState.Type<StarState> getPersistentStateType(long worldSeed) {
-        return new PersistentState.Type<>(() -> new StarState(worldSeed), nbt -> StarState.fromNbt(nbt, worldSeed), null);
-    }
-
     public StarState(long worldSeed) {
         this.seed = (Starcaller.CONFIG.starSeed != -1 ? Starcaller.CONFIG.starSeed : worldSeed);
         this.limit = Starcaller.CONFIG.starLimit;

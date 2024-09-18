@@ -163,8 +163,8 @@ public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
     }
 
     @Override
-    public void onCraftByPlayer(ItemStack stack, World world, PlayerEntity playerEntity) {
-        super.onCraftByPlayer(stack, world, playerEntity);
+    public void onCraft(ItemStack stack, World world, PlayerEntity playerEntity) {
+        super.onCraft(stack, world, playerEntity);
         Long remainingTicks = getRemainingTicks(stack, world);
         Star star = getStar(stack, world);
         if (world instanceof StarcallerWorld scw && star != null && remainingTicks != null && remainingTicks > 0) {
