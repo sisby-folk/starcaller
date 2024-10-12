@@ -37,7 +37,7 @@ public class Starcaller implements ModInitializer {
     public void onInitialize() {
         ServerWorldEvents.LOAD.register(((server, world) -> {
             if (world.getRegistryKey() == World.OVERWORLD) {
-                world.getPersistentStateManager().getOrCreate(StarState.getPersistentStateType(world.getSeed()), STATE_KEY);
+                world.getPersistentStateManager().getOrCreate(nbt -> StarState.fromNbt(nbt, world.getSeed()), () -> new StarState(world.getSeed()), STATE_KEY);
             }
         }));
         ServerTickEvents.END_WORLD_TICK.register((world -> {
@@ -69,7 +69,7 @@ public class Starcaller implements ModInitializer {
     private static void updateStarGrounded(PlayerEntity cause, ServerWorld world, Star star, long time) {
         if (star.groundedTick != time) {
             star.groundedTick = time;
-            world.getPersistentStateManager().get(StarState.getPersistentStateType(world.getSeed()), STATE_KEY).markDirty();
+            world.getPersistentStateManager().get(nbt -> StarState.fromNbt(nbt, world.getSeed()), STATE_KEY).markDirty();
             StarcallerNetworking.syncStarGrounded(cause, world, star);
         }
     }
@@ -82,6 +82,6 @@ public class Starcaller implements ModInitializer {
         TextColor nameColor = cause.getDisplayName().getStyle().getColor();
         star.editor = cause.getDisplayName().getString();
         star.editorColor = nameColor != null ? nameColor.getRgb() : 0xFFFFFF;
-        world.getPersistentStateManager().get(StarState.getPersistentStateType(world.getSeed()), STATE_KEY).markDirty();
+        world.getPersistentStateManager().get(nbt -> StarState.fromNbt(nbt, world.getSeed()), STATE_KEY).markDirty();
     }
 }

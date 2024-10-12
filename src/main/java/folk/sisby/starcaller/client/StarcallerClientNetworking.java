@@ -20,12 +20,14 @@ public class StarcallerClientNetworking {
     }
 
     private static void setInitialStarState(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+        buf.retain();
         client.execute(() -> {
             if (client.world instanceof StarcallerWorld scw) {
                 scw.starcaller$setGeneratorValues(buf.readLong(), buf.readInt());
                 updateGrounded(client, handler, buf, responseSender);
                 updateColors(client, handler, buf, responseSender);
             }
+            buf.release();
         });
     }
 
