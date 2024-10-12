@@ -1,19 +1,32 @@
 {
   "schemaVersion": 1,
-  "id": "starcaller",
+  "id": "${modId}",
   "version": "${version}",
-  "name": "Starcaller",
-  "description": "An unconventional mod about the effects of pulling stars from the sky.",
+  "name": "${modName}",
+  "description": "${modDescription}",
   "authors": [
-    "Sisby folk"
+    "${authors}"
+  ],
+  "contributors": [
+    "${contributors}"
   ],
   "contact": {
-    "homepage": "https://github.com/sisby-folk/starcaller",
-    "sources": "https://github.com/sisby-folk/starcaller",
-    "issues": "https://github.com/sisby-folk/starcaller/issues"
+    "homepage": "${homepage}",
+    "issues": "${issues}",
+    "sources": "${sources}"
   },
-  "license": "MIT",
-  "icon": "assets/starcaller/icon.png",
+  "license": "${license}",
+  "icon": "assets/${modId}/icon.png",
+  "accessWidener": "${modId}.accesswidener",
+  "mixins": [
+    "${modId}.mixins.json"
+  ],
+  "depends": {
+    "minecraft": ">=${mc}",
+    "fabricloader": ">=${fl}",
+    "fabric-api": ">=${fapi}",
+    "lib39-sandman": ">=${lib39}"
+  },
   "entrypoints": {
     "main": [
       "folk.sisby.starcaller.Starcaller"
@@ -21,15 +34,5 @@
     "client": [
       "folk.sisby.starcaller.client.StarcallerClient"
     ]
-  },
-  "mixins": [
-    "starcaller.mixins.json"
-  ],
-  "accessWidener": "starcaller.accesswidener",
-  "depends": {
-    "fabricloader": ">=${fl}",
-    "fabric-api": ">=${fapi}",
-    "minecraft": ">=${mc}",
-    "lib39-sandman": ">=${lib39}"
   }
 }
