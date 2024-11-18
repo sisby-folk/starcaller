@@ -22,7 +22,7 @@ public abstract class MixinClientWorld implements StarcallerWorld {
     @Unique private int starcaller$iterations = 1500;
     @Unique private List<Star> starcaller$stars = StarUtil.generateStars(starcaller$seed, starcaller$iterations);
 
-    @Inject(method = "method_23787", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getStarBrightness", at = @At("HEAD"), cancellable = true)
     public void fullBrightStarsWithSpear(float f, CallbackInfoReturnable<Float> cir) {
         if (MinecraftClient.getInstance().player != null && (MinecraftClient.getInstance().player.getMainHandStack().isOf(Starcaller.SPEAR) || MinecraftClient.getInstance().player.getOffHandStack().isOf(Starcaller.SPEAR))) {
             cir.setReturnValue(1.0F);
@@ -34,7 +34,6 @@ public abstract class MixinClientWorld implements StarcallerWorld {
     public void starcaller$groundStar(PlayerEntity cause, Star star) {
         StarcallerClient.groundStar(((ClientWorld) (Object) this), star);
     }
-
 
     @Override
     public void starcaller$freeStar(PlayerEntity cause, Star star) {
