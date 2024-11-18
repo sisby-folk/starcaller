@@ -81,6 +81,11 @@ public class SpearItem extends Item {
         }
     }
 
+	@Override
+	public int getMaxUseTime(ItemStack stack, LivingEntity user) {
+		return 72000;
+	}
+
     @Override
     public UseAction getUseAction(ItemStack itemStack) {
         return UseAction.SPEAR;

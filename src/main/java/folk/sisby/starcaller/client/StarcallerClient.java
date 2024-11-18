@@ -34,8 +34,8 @@ public class StarcallerClient implements ClientModInitializer {
         ModelPredicateProviderRegistry.register(Starcaller.STARDUST, Identifier.tryParse("star_expired"),
                 (stack, world, entity, i) -> Objects.requireNonNullElse(StardustItem.getRemainingTicks(stack, world), 1L) <= 0 ? 1.0F : 0.0F
         );
-        ColorProviderRegistry.ITEM.register((stack, index) -> (index > 0) ? (0x888888 + random.nextInt(127)) : -1, Starcaller.SPEAR);
-        ColorProviderRegistry.ITEM.register((stack, index) -> stack.getItemBarColor(), Starcaller.STARDUST);
+        ColorProviderRegistry.ITEM.register((stack, index) -> (index > 0) ? (0xFF888888 + random.nextInt(127)) : -1, Starcaller.SPEAR);
+        ColorProviderRegistry.ITEM.register((stack, index) -> 0xFF000000 | stack.getItemBarColor(), Starcaller.STARDUST);
         ClientTickEvents.END_WORLD_TICK.register((StarcallerClient::clientTick));
         StarcallerClientNetworking.init();
         Starcaller.TICKER = new StardustTickerImpl();
