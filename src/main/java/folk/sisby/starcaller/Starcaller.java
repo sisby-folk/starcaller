@@ -6,10 +6,11 @@ import folk.sisby.starcaller.item.StardustItem;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.component.ComponentType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
@@ -26,8 +27,12 @@ public class Starcaller implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(ID);
     public static final String STATE_KEY = "starcaller_stars";
 
-    public static final StardustItem STARDUST = Registry.register(Registries.ITEM, id("stardust"), new StardustItem(new FabricItemSettings().maxCount(1)));
-    public static final SpearItem SPEAR = Registry.register(Registries.ITEM, id("spear"), new SpearItem(new FabricItemSettings().maxCount(1)));
+	public static final ComponentType<StarComponent> STAR = Registry.register(Registries.DATA_COMPONENT_TYPE, Identifier.of(ID, "star"),
+		ComponentType.<StarComponent>builder().codec(StarComponent.CODEC).build()
+	);
+
+    public static final StardustItem STARDUST = Registry.register(Registries.ITEM, id("stardust"), new StardustItem(new Item.Settings().maxCount(1)));
+    public static final SpearItem SPEAR = Registry.register(Registries.ITEM, id("spear"), new SpearItem(new Item.Settings().maxCount(1)));
 
     public static final StarcallerConfig CONFIG = StarcallerConfig.createToml(FabricLoader.getInstance().getConfigDir(), "", ID, StarcallerConfig.class);
 
@@ -55,7 +60,7 @@ public class Starcaller implements ModInitializer {
     }
 
     public static Identifier id(String path) {
-        return new Identifier(ID, path);
+        return Identifier.of(ID, path);
     }
 
     public static void groundStar(PlayerEntity cause, ServerWorld world, Star star) {

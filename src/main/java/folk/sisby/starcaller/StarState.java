@@ -4,6 +4,7 @@ import folk.sisby.starcaller.util.StarUtil;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.world.PersistentState;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class StarState extends PersistentState {
     public List<Star> stars;
 
     public static PersistentState.Type<StarState> getPersistentStateType(long worldSeed) {
-        return new PersistentState.Type<>(() -> new StarState(worldSeed), nbt -> StarState.fromNbt(nbt, worldSeed), null);
+        return new PersistentState.Type<>(() -> new StarState(worldSeed), (nbt, wrapperLookup) -> StarState.fromNbt(nbt, worldSeed), null);
     }
 
     public StarState(long worldSeed) {
@@ -53,7 +54,7 @@ public class StarState extends PersistentState {
     }
 
     @Override
-    public NbtCompound writeNbt(NbtCompound nbt) {
+    public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         NbtList nbtList = new NbtList();
         for (Star star : stars) {
             nbtList.add(star.toNbt());

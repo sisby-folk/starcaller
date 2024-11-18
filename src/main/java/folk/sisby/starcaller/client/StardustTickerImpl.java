@@ -5,10 +5,7 @@ import folk.sisby.starcaller.StardustTicker;
 import folk.sisby.starcaller.item.StardustItem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import org.joml.Math;
-
-import static folk.sisby.starcaller.item.StardustItem.KEY_STAR_GROUNDED_TICK;
 
 public class StardustTickerImpl implements StardustTicker {
     @Override
@@ -19,9 +16,8 @@ public class StardustTickerImpl implements StardustTicker {
 
     @Override
     public int getItemBarStep(ItemStack stack) {
-        NbtCompound nbt = stack.getNbt();
-        if (nbt != null && nbt.contains(KEY_STAR_GROUNDED_TICK) && MinecraftClient.getInstance().world != null) {
-            long remainingTicks = Starcaller.CONFIG.starGroundedTicks + nbt.getLong(KEY_STAR_GROUNDED_TICK) - MinecraftClient.getInstance().world.getTime();
+        if (stack.contains(Starcaller.STAR) && MinecraftClient.getInstance().world != null) {
+            long remainingTicks = Starcaller.CONFIG.starGroundedTicks + stack.get(Starcaller.STAR).groundedTick() - MinecraftClient.getInstance().world.getTime();
             return (int) Math.clamp(0, 13.0F, (remainingTicks * 13.0F / Starcaller.CONFIG.starGroundedTicks));
 
         }

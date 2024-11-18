@@ -61,9 +61,9 @@ public class SpearItem extends Item {
     @Override
     public void onStoppedUsing(ItemStack itemStack, World world, LivingEntity livingEntity, int i) {
         if (livingEntity instanceof PlayerEntity player) {
-            int j = this.getMaxUseTime(itemStack) - i;
+            int j = this.getMaxUseTime(itemStack, livingEntity) - i;
             if (j >= DRAW_TIME) {
-                world.playSoundFromEntity(player, player, SoundEvents.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                world.playSoundFromEntity(player, player, SoundEvents.ITEM_TRIDENT_THROW.value(), SoundCategory.PLAYERS, 1.0F, 1.0F);
                 if (world instanceof StarcallerWorld scw) {
                     if (player.raycast(12 * 16, 1.0F, false).getType() == HitResult.Type.MISS) {
                         Vec3d cursorCoordinates = StarUtil.correctForSkyAngle(StarUtil.getStarCursor(player.getHeadYaw(), player.getPitch()), world.getSkyAngle(1.0F));
@@ -84,10 +84,5 @@ public class SpearItem extends Item {
     @Override
     public UseAction getUseAction(ItemStack itemStack) {
         return UseAction.SPEAR;
-    }
-
-    @Override
-    public int getMaxUseTime(ItemStack itemStack) {
-        return 72000;
     }
 }

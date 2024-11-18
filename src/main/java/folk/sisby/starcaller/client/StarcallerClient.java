@@ -28,10 +28,10 @@ public class StarcallerClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        ModelPredicateProviderRegistry.register(Starcaller.SPEAR, new Identifier("throwing"),
+        ModelPredicateProviderRegistry.register(Starcaller.SPEAR, Identifier.tryParse("throwing"),
                 (stack, world, entity, i) -> entity != null && entity.isUsingItem() && entity.getActiveItem() == stack ? 1.0F : 0.0F
         );
-        ModelPredicateProviderRegistry.register(Starcaller.STARDUST, new Identifier("star_expired"),
+        ModelPredicateProviderRegistry.register(Starcaller.STARDUST, Identifier.tryParse("star_expired"),
                 (stack, world, entity, i) -> Objects.requireNonNullElse(StardustItem.getRemainingTicks(stack, world), 1L) <= 0 ? 1.0F : 0.0F
         );
         ColorProviderRegistry.ITEM.register((stack, index) -> (index > 0) ? (0x888888 + random.nextInt(127)) : -1, Starcaller.SPEAR);

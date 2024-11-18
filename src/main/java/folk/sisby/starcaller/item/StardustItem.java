@@ -2,17 +2,18 @@ package folk.sisby.starcaller.item;
 
 import com.unascribed.lib39.sandman.api.TicksAlwaysItem;
 import folk.sisby.starcaller.Star;
+import folk.sisby.starcaller.StarComponent;
 import folk.sisby.starcaller.Starcaller;
 import folk.sisby.starcaller.duck.StarcallerWorld;
 import folk.sisby.starcaller.util.ColorUtil;
-import net.minecraft.client.item.TooltipContext;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.DyedColorComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
-import net.minecraft.item.DyeableItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.world.ServerWorld;
@@ -29,40 +30,35 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
-public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
-    public static final String KEY_STAR_INDEX = "star";
-    public static final String KEY_STAR_GROUNDED_TICK = "groundedTick";
-    public static final String KEY_EDITOR = "editor";
-    public static final String KEY_EDITOR_COLOR = "editorColor";
-
+public class StardustItem extends Item implements TicksAlwaysItem {
     public StardustItem(Settings settings) {
         super(settings);
     }
 
     public static ItemStack fromStar(int index, Star star) {
         ItemStack stack = Starcaller.STARDUST.getDefaultStack().copy();
-        NbtCompound nbt = stack.getOrCreateNbt();
-        nbt.putInt(KEY_STAR_INDEX, index);
-        nbt.putLong(KEY_STAR_GROUNDED_TICK, star.groundedTick);
-        NbtCompound display = new NbtCompound();
-        display.putInt(DyeableItem.COLOR_KEY, star.color);
-        nbt.put(DyeableItem.DISPLAY_KEY, display);
-        if (star.editor != null) nbt.putString(KEY_EDITOR, star.editor);
-        nbt.putInt(KEY_EDITOR_COLOR, star.editorColor);
+		stack.set(Starcaller.STAR, new StarComponent(
+			index,
+			star.groundedTick,
+			Optional.ofNullable(star.editor),
+			star.editorColor
+		));
+		stack.set(DataComponentTypes.DYED_COLOR, new DyedColorComponent(star.color, true));
         return stack;
     }
 
     public static @Nullable Integer getStarIndex(ItemStack stack) {
-        return stack.getNbt() != null && stack.getNbt().contains(KEY_STAR_INDEX) ? stack.getNbt().getInt(KEY_STAR_INDEX) : null;
+        return stack.contains(Starcaller.STAR) ? stack.get(Starcaller.STAR).starIndex() : null;
     }
 
     public static @Nullable Long getGroundedTick(ItemStack stack) {
-        return stack.getNbt() != null && stack.getNbt().contains(KEY_STAR_GROUNDED_TICK) ? stack.getNbt().getLong(KEY_STAR_GROUNDED_TICK) : null;
+        return stack.contains(Starcaller.STAR) ? stack.get(Starcaller.STAR).groundedTick() : null;
     }
 
     public static @Nullable MutableText getEditor(ItemStack stack) {
-        return stack.getNbt() != null && stack.getNbt().contains(KEY_EDITOR) && stack.getNbt().contains(KEY_EDITOR_COLOR) ? Text.literal(stack.getNbt().getString(KEY_EDITOR)).setStyle(Style.EMPTY.withColor(stack.getNbt().getInt(KEY_EDITOR_COLOR))) : null;
+        return stack.contains(Starcaller.STAR) && stack.get(Starcaller.STAR).editor().isPresent() ? Text.literal(stack.get(Starcaller.STAR).editor().get()).setStyle(Style.EMPTY.withColor(stack.get(Starcaller.STAR).editorColor())) : null;
     }
 
     public static @Nullable Star getStar(ItemStack stack, World world) {
@@ -97,26 +93,18 @@ public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
         if (starIndex != null) {
             name = Text.translatable("star.starcaller.overworld.%s".formatted(starIndex)).formatted(Formatting.ITALIC);
         }
-        if (hasColor(stack)) {
-            name = name.styled(style -> style.withColor(getColor(stack)));
+        if (stack.contains(DataComponentTypes.DYED_COLOR)) {
+            name = name.styled(style -> style.withColor(stack.get(DataComponentTypes.DYED_COLOR).rgb()));
         }
         return starIndex != null ? Text.translatable("item.starcaller.stardust.named", name).formatted(Formatting.GRAY) : name;
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> list, TooltipContext tooltipContext) {
-        super.appendTooltip(stack, world, list, tooltipContext);
-        Long remainingTicks = getRemainingTicks(stack, world);
-        if (remainingTicks != null) {
-            if (remainingTicks < 0) {
-                list.clear();
-                return;
-            }
-            list.add(getCountdown(remainingTicks));
-        }
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+        super.appendTooltip(stack, context, tooltip, type);
         MutableText editor = getEditor(stack);
         if (editor != null) {
-            list.add(Text.translatable("item.starcaller.stardust.editor", editor).formatted(Formatting.GRAY));
+	        tooltip.add(Text.translatable("item.starcaller.stardust.editor", editor).formatted(Formatting.GRAY));
         }
     }
 
@@ -132,8 +120,8 @@ public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
 
     @Override
     public int getItemBarColor(ItemStack stack) {
-        if (hasColor(stack)) {
-            return getColor(stack);
+        if (stack.contains(DataComponentTypes.DYED_COLOR)) {
+            return stack.get(DataComponentTypes.DYED_COLOR).rgb();
         }
         return 0xFFFFFF;
     }
@@ -169,7 +157,7 @@ public class StardustItem extends Item implements DyeableItem, TicksAlwaysItem {
         Star star = getStar(stack, world);
         if (world instanceof StarcallerWorld scw && star != null && remainingTicks != null && remainingTicks > 0) {
             if (!world.isClient && !Objects.equals(remainingTicks, StardustItem.getWorldRemainingTicks(stack, world))) return;
-            scw.starcaller$colorStar(playerEntity, star, 0xFF000000 | getColor(stack));
+            scw.starcaller$colorStar(playerEntity, star, 0xFF000000 | stack.get(DataComponentTypes.DYED_COLOR).rgb());
         }
     }
 
